@@ -1,0 +1,37 @@
+https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md
+
+sudo apt-get -y install dnsmasq hostapd
+sudo systemctl stop dnsmasq ; sudo systemctl stop hostapd
+
+IP="192.168.1.1"
+IP_RANGE="192.168.1.200,192.168.1.250"
+WSSID="Raspberry"
+WPASSWD="12345678"
+
+sudo cp -p  /etc/dhcpcd.conf /etc/dhcpcd.conf.orig
+#Configuring a static IP
+echo -e "interface wlan0\n    static ip_address=${IP}/24" >> /etc/dhcpcd.conf
+#Configuring the DHCP server (dnsmasq)
+echo -e "interface=wlan0\n    dhcp-range=${IP_RANGE},255.255.255.0,24h" | sudo tee /etc/dnsmasq.d/dhcp.conf
+
+cat << EOF | sudo tee /etc/hostapd/hostapd.conf
+interface=wlan0
+driver=nl80211
+ssid=${WSSID}
+hw_mode=g
+channel=6
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=${WPASSWD}
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+EOF
+
+sudo sed -i '/DAEMON_CONF/ s/#//; /DAEMON_CONF/ s|="|="/etc/hostapd/hostapd.conf| ' /etc/default/hostapd
+#delete all settings from /etc/wpa_supplicant/wpa_supplicant.conf
+sudo sed -ni '/network/q;p' /etc/wpa_supplicant/wpa_supplicant.conf
+#sudo systemctl disable hostapd

@@ -1,0 +1,61 @@
+https://www.raspberrypi.org/forums/viewtopic.php?t=73464
+http://www.redhenlab.org/home/the-cognitive-core-research-topics-in-red-hen/the-barnyard/hardware-encoding-with-the-raspberry-pi
+http://www.deb-multimedia.org/dists/stable/main/binary-armhf/
+https://stackoverflow.com/questions/40175644/ffmpeg-hardware-acceleration-on-raspberry-pi
+
+use h264_mmal hardware accelerated decoder
+use h264_omx tells FFMpeg to use the h264_omx encoder
+
+cd /home/pi
+sudo apt-get -y update && sudo apt-get -y upgrade
+sudo apt-get -y install autoconf automake build-essential libass-dev libgpac-dev libtool pkg-config texi2html zlib1g-dev libmp3lame-dev libx264-dev
+
+#Download and compile libfdk-aac(aac decoder and encoder).
+mkdir ~/ffmpeg_sources && cd ~/ffmpeg_sources
+wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
+unzip fdk-aac.zip && cd mstorsjo-fdk-aac*
+autoreconf -fiv
+time ./configure --prefix="$HOME/ffmpeg_build" --disable-shared
+time make -j4
+make install
+
+sudo apt-get -y install build-essential dh-make fakeroot yasm pkg-config libx264-dev libomxil-bellagio-dev checkinstall
+?#sudo apt-get install libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev \
+libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
+
+Download and compile ffmpeg. This will take roughly 20 minutes.
+cd ~/ffmpeg_sources
+wget http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+tar xjvf ffmpeg-snapshot.tar.bz2 && cd ffmpeg
+
+#I've built ffmpeg for ARM but I would like to also optimize the binary for size
+#Please use --enable-small to optimize for size.
+
+cat RELEASE VERSION | tr '\n' '-'  | sed '$ s/.$//'  > VERSION2
+mv VERSION2 VERSION
+
+PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig"
+export PKG_CONFIG_PATH
+#./configure --prefix="$HOME/ffmpeg_build" --extra-cflags="-I$HOME/ffmpeg_build/include" \
+#   --extra-ldflags="-L$HOME/ffmpeg_build/lib" --bindir="$HOME/bin" --extra-libs="-ldl" --enable-gpl \
+#   --enable-libass --enable-libfdk-aac --enable-libmp3lame --disable-ffplay \
+#   --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small
+time ./configure --prefix="$HOME/ffmpeg_build" --extra-cflags="-I$HOME/ffmpeg_build/include" \
+   --extra-ldflags="-L$HOME/ffmpeg_build/lib" --bindir="/usr/bin" --extra-libs="-ldl" --enable-gpl \
+   --enable-libass --enable-libfdk-aac --enable-libmp3lame --disable-ffplay \
+   --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small
+time make -j4
+
+./ffmpeg -encoders | egrep 'h264|mp3'
+./ffmpeg -decoders | egrep 'h264|mp3'
+./ffmpeg -h encoder=h264_omx
+
+#cd ~/ffmpeg_sources/ffmpeg/
+mkdir -p ~/ffmpeg_build/share/{doc,man}
+cat RELEASE ; ./ffbuild/version.sh
+checkinstall --nodoc --install=no --pkgversion=`cat VERSION` --exclude=/home/pi/ffmpeg_build/
+
+sudo dpkg -i ffmpeg_3.*_armhf.deb
+
+#Lock the package so it won't get replaced by another version during software updates
+echo "ffmpeg hold" | sudo dpkg --set-selections

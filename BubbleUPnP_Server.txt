@@ -1,0 +1,94 @@
+https://www.raspberrypi.org/forums/viewtopic.php?t=73464
+http://www.bubblesoftapps.com/bubbleupnpserver/
+
+cd /home/pi
+wget http://www.bubblesoftapps.com/bubbleupnpserver/BubbleUPnPServer-distrib.zip -O bubbleupnpserver.zip
+sudo unzip -d /opt/bubbleupnpserver bubbleupnpserver.zip
+sudo chown -R pi.pi /opt/bubbleupnpserver
+sudo apt-get install openjdk-9-jre-headless
+
+cat << "EOF" > /opt/bubbleupnpserver/BubbleUPnPServer
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          BubbleServer
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: BubbleUPnP Server Background Service Management
+# Description:       Used to ensure BubbleUPnP starts/stops etc
+### END INIT INFO
+
+DAEMON_PATH="/opt/bubbleupnpserver"
+
+DAEMON="java -Xss256k -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -jar BubbleUPnPServerLauncher.jar"
+DAEMONOPTS=""
+
+NAME=BubbleUPnPServer
+DESC="Runs BubbleUPnPServer"
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+case "$1" in
+start)
+  printf "%-50s" "Starting $NAME..."
+  cd $DAEMON_PATH
+  PID=`$DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
+  #echo "Saving PID" $PID " to " $PIDFILE
+        if [ -z $PID ]; then
+            printf "%sn" "Fail"
+        else
+            echo $PID > $PIDFILE
+            printf "%sn" "Ok"
+        fi
+;;
+status)
+        printf "%-50s" "Checking $NAME..."
+        if [ -f $PIDFILE ]; then
+            PID=`cat $PIDFILE`
+            if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+                printf "%sn" "Process dead but pidfile exists"
+            else
+                echo "Running"
+            fi
+        else
+            printf "%sn" "Service not running"
+        fi
+;;
+stop)
+        printf "%-50s" "Stopping $NAME"
+            PID=`cat $PIDFILE`
+            cd $DAEMON_PATH
+        if [ -f $PIDFILE ]; then
+            kill -HUP $PID
+            printf "%sn" "Ok"
+            rm -f $PIDFILE
+        else
+            printf "%sn" "pidfile not found"
+        fi
+;;
+
+restart)
+    $0 stop
+    $0 start
+;;
+
+*)
+        echo "Usage: $0 {status|start|stop|restart}"
+        exit 1
+esac
+EOF
+
+sudo ln /opt/bubbleupnpserver/BubbleUPnPServer /etc/init.d/BubbleUPnPServer
+sudo chmod 755 /etc/init.d/BubbleUPnPServer
+sudo update-rc.d BubbleUPnPServer defaults
+systemctl start BubbleUPnPServer
+tail -f /opt/bubbleupnpserver/BubbleUPnPServer.log.0
+systemctl stop BubbleUPnPServer
+
+sed -i '/disableUPnPPortForwarding/ s/false/true/' /opt/bubbleupnpserver/configuration.xml
+sed -i '/allowWANConfigurationUI/ s/true/false/' /opt/bubbleupnpserver/configuration.xml
+sed -i '/allowWANConnections/ s/true/false/' /opt/bubbleupnpserver/configuration.xml
+egrep --color 'disableUPnPPortForwarding|allowWANConfigurationUI|allowWANConnections' /opt/bubbleupnpserver/configuration.xml
+systemctl start BubbleUPnPServer
+grep "started Jetty connector on" /opt/bubbleupnpserver/BubbleUPnPServer.log.0 | grep -v 127.0.0.1 | grep 58050 | tail -n1 | cut -d: -f4,5
