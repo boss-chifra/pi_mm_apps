@@ -1,0 +1,16 @@
+FILE="/etc/minidlna.conf"
+
+sudo apt-get -y install minidlna
+sudo systemctl stop minidlna
+
+sed -i '' ${FILE}
+sudo sed -i '/inotify=yes/s/^#//g; /friendly_name/s/^#//g; /friendly_name/ s/=/=malinka: pi/' ${FILE}
+sudo sed -i '/^media_dir=/s/^/#/; /#media_dir/a  media_dir=A,\/media\/music\nmedia_dir=V,\/media\/video\nmedia_dir=V,\/mnt\/media' ${FILE}
+sudo sed -i '/merge_media_dirs/s/^#//g' ${FILE}
+sudo sed -i '/#root_container/a  root_container=V' ${FILE}
+root_container
+
+sysctl fs.inotify.max_user_watches | grep --color {[0-9],}
+echo fs.inotify.max_user_watches=200000 | sudo tee /etc/sysctl.d/90-minidlna.conf ; sudo sysctl --system
+sysctl fs.inotify.max_user_watches | grep --color {[0-9],}
+sudo systemctl start minidlna
