@@ -1,0 +1,112 @@
+https://www.raspberrypi.org/forums/viewtopic.php?t=138145
+https://www.digikey.com/en/maker/blogs/raspberry-pi-3-how-to-configure-wi-fi-and-bluetooth/03fcd2a252914350938d8c5471cf3b63
+https://gist.github.com/oleq/24e09112b07464acbda1
+http://karuppuswamy.com/wordpress/2015/08/15/configuring-alsa-audio-output-on-analog-and-hdmi-of-raspberry-pi/
+https://github.com/Arkq/bluez-alsa
+http://denvycom.com/blog/playing-audio-over-bluetooth-on-rasbperry-pi-command-line/
+https://forum.armbian.com/topic/6480-bluealsa-bluetooth-audio-using-alsa-not-pulseaudio/
+https://www.raspberrypi.org/forums/viewtopic.php?t=194990
+
+
+#Configure Audio
+
+cat << EOF | sudo tee /etc/asound.conf
+pcm.!default {
+        type hw
+        card 0
+}
+ctl.!default {
+        type hw
+        card 0
+}
+
+pcm.analog {
+        type hw
+        card 0
+}
+ctl.analog {
+        type hw
+        card 0
+}
+
+pcm.esquire2 {
+    type plug
+        slave.pcm {
+        type bluealsa
+        device "0C:A6:94:99:FA:4A"
+        profile "a2dp"
+                    }
+}
+ctl.esquire2 {
+    type bluealsa
+}
+EOF
+
+#Bluetooth
+
+sudo apt-get -y install bluealsa
+
+sudo systemctl restart hciuart
+sudo systemctl restart bluetooth
+
+bluetoothctl
+[bluetooth]# scan on
+[bluetooth]# devices
+[bluetooth]# [NEW] Device 0C:A6:94:99:FA:4A HK Esquire 2
+
+[bluetooth]# scan off
+[bluetooth]# pair 0C:A6:94:99:FA:4A
+[bluetooth]# trust 0C:A6:94:99:FA:4A
+[bluetooth]# connect 0C:A6:94:99:FA:4A
+[bluetooth]# info 0C:A6:94:99:FA:4A
+[bluetooth]# exit
+
+MAC="0C:A6:94:99:FA:4A"
+[ -d /etc/local ] || sudo mkdir /etc/local
+cat << EOF | sudo tee /etc/local/bc.sh
+#!/bin/bash
+echo -e "connect ${MAC}\nquit" | sudo bluetoothctl
+EOF
+
+cat << EOF | sudo tee /etc/local/bd.sh
+#!/bin/bash
+echo -e "disconnect ${MAC}\nquit" | sudo bluetoothctl
+EOF
+sudo chmod ugo+x /etc/local/b[cd].sh
+
+echo -e "info 0C:A6:94:99:FA:4A\nquit" | bluetoothctl
+
+-----------------------------------------------------
+
+GUI tool
+sudo apt-get install blueman
+
+Speaker Test to test Left speaker (you should hear smooth noise):
+$ speaker-test -t sine -f 440 -c 2 -s 1
+
+Now it is turn of Right speaker
+$ speaker-test -t sine -f 440 -c 2 -s 2
+
+$ Verifying .wav file playback
+aplay /usr/share/sounds/alsa/Side_Left.wav ; aplay /usr/share/sounds/alsa/Side_Right.wav
+aplay -D esquire2 /usr/share/sounds/alsa/Side_Left.wav ; aplay -D esquire2 /usr/share/sounds/alsa/Side_Right.wav
+aplay -D bluealsa:HCI=hci0,DEV=0C:A6:94:99:FA:4A,PROFILE=a2dp /usr/share/sounds/alsa/Side_Left.wav ; aplay -D bluealsa:HCI=hci0,DEV=0C:A6:94:99:FA:4A,PROFILE=a2dp /usr/share/sounds/alsa/Side_Right.wav
+
+amixer -D esquire2 scontrols
+amixer -D bluealsa scontrols
+alsamixer -D bluealsa:HCI=hci0
+amixer -D bluealsa sset "HK Esquire 2 - A2DP" 70%
+amixer -D bluealsa sset "HK Esquire 2 - A2DP" 90
+amixer -D bluealsa sset "HK Esquire 2 - A2DP" 20%+
+amixer -D bluealsa sset "HK Esquire 2 - A2DP" 20%-
+
+amixer scontrols
+alsamixer -D hw:0
+amixer -D hw sset "PCM" 73%
+amixer -c 0 set PCM 2dB+
+
+#if you are wanting to get analog audio working use a "1" if you are using HDMI use a "2". The rule is "0" = auto
+# Analog
+amixer cset numid=3 1
+# HDMI
+amixer cset numid=3 2
