@@ -104,6 +104,7 @@ amixer scontrols
 alsamixer -D hw:0
 amixer -D hw sset "PCM" 73%
 amixer -c 0 set PCM 2dB+
+amixer -D hw -- sset PCM playback -20dB
 
 #if you are wanting to get analog audio working use a "1" if you are using HDMI use a "2". The rule is "0" = auto
 # Analog
