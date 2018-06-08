@@ -1,0 +1,80 @@
+export MAC="0C:A6:94:99:FA:4A"
+
+sudo apt-get -y install mpd mpc
+
+sudo sed -i '/auto_update\ /s/^#//' /etc/mpd.conf
+sudo sed -i '/hw:0,0/s/^#//g' /etc/mpd.conf
+sudo sed -i 's/My ALSA Device/Analog Jack/g' /etc/mpd.conf
+sudo sed -i '0,/mixer_type      "hardware"/s/^#\tmixer_type/\tmixer_type/' /etc/mpd.conf
+sudo sed -i '0,/mixer_device/s/^#\tmixer_device/\tmixer_device/' /etc/mpd.conf
+sudo sed -i '0,/mixer_control/s/^#\tmixer_control/\tmixer_control/' /etc/mpd.conf
+sudo sed -i '/bind_to_address.*localhost/s/localhost/0.0.0.0/' /etc/mpd.conf
+
+echo -e "/An example of an ALSA output/a
+audio_output {
+\ttype\t\t\"alsa\"
+\tname\t\t\"Esquire 2\"
+\tdevice\t\t\"bluealsa:HCI=hci0,DEV=${MAC},PROFILE=a2dp\"
+\tmixer_type\t\"hardware\"
+\tmixer_device\t\"bluealsa:HCI=hci0\"
+\tmixer_control\t\"HK Esquire 2 - A2DP\"
+}
+.
+wq" | sudo ed -s /etc/mpd.conf
+
+cat <<EOF | sudo tee /var/lib/mpd/playlists/radio.m3u
+http://air2.radiorecord.ru:805/rr_320
+http://ep256.streamr.ru
+http://pool.cdn.lagardere.cz/fm-evropa2-128
+http://bfm.hostingradio.ru:8004/fm
+http://kommersant77.hostingradio.ru:8016/kommersant64.mp3
+http://icecast.vgtrk.cdnvideo.ru/vestifm_aac_64kbps
+http://audio2.video.ria.ru:80/voicerushi
+http://ic7.101.ru:8000/a199
+http://online.radiorecord.ru:8102/ansh_aac
+EOF
+
+cat <<EOF | sudo tee /var/lib/mpd/playlists/detskoe-radio.m3u
+http://ic7.101.ru:8000/a199
+http://radio.tmstudia.ru:8001/live
+http://gamaun.online:8020/radio
+http://icecast.russkoeradio.cdnvideo.ru:80/st28.mp3
+http://music.myradio.ua:80/fairytales128.mp3
+EOF
+
+sudo chown mpd.audio -R /var/lib/mpd/playlists/
+sudo systemctl restart mpd
+
+----------------------------------------------------
+mpc add http://air2.radiorecord.ru:805/rr_320
+mpc playlist
+mpc play
+mpc next
+mpc seek +01:00
+mpc seek 70:00
+mpc outputs
+mpc enable 2
+mpc enable only "Analog Jack"
+mpc update
+mpc listall
+
+-------------------------------------------------------
+mcedit /etc/mpd.conf
+audio_output {
+	type			"alsa"
+	name			"Bluetooth Speaker"
+	device			"bluealsa:HCI=hci0,DEV=0C:A6:94:99:FA:4A,PROFILE=a2dp"
+	mixer_type		"hardware"
+	mixer_device	"bluealsa:HCI=hci0"
+	mixer_control	"HK Esquire 2 - A2DP"
+}
+
+audio_output {
+        type            "alsa"
+        name            "Jack"
+        device          "hw:0"
+        mixer_type      "hardware"
+        mixer_device    "default"
+        mixer_control   "PCM"
+}
+------------------------------------------------------------
