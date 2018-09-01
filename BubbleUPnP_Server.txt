@@ -92,3 +92,4 @@ sed -i '/allowWANConnections/ s/true/false/' /opt/bubbleupnpserver/configuration
 egrep --color 'disableUPnPPortForwarding|allowWANConfigurationUI|allowWANConnections' /opt/bubbleupnpserver/configuration.xml
 systemctl start BubbleUPnPServer
 grep "started Jetty connector on" /opt/bubbleupnpserver/BubbleUPnPServer.log.0 | grep -v 127.0.0.1 | grep 58050 | tail -n1 | cut -d: -f4,5
+# Web URL http://x.x.x.x:58050/#main

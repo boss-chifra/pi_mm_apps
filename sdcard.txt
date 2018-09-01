@@ -1,0 +1,16 @@
+https://developer.ridgerun.com/wiki/index.php/High_performance_SD_card_tuning_using_the_EXT4_file_system
+
+mkfs.ext4 /dev/sda1
+umount /dev/sda1
+tune2fs -o journal_data_writeback /dev/sda1
+tune2fs -O ^has_journal /dev/sda1
+tune2fs -r0 /dev/sda1
+e2fsck -f /dev/sda1
+mkdir /mnt/flash
+
+cat << EOF >> /etc/fstab
+UUID="d908ca3b-8252-41ee-ad8c-659a4c7f726d"             /mnt/flash      ext4    noauto,noatime,data=writeback        0       0
+EOF
+
+#mount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/
+sed -i '$imount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/' /etc/rc.local
