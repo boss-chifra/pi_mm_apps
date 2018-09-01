@@ -1,0 +1,41 @@
+https://admin812.ru/torrent-tv-cherez-noxbit-na-libreelec-raspberry-3.html
+#Setup NOXBIT
+
+NOXBIT="/opt/noxbit"
+sudo mkdir ${NOXBIT}
+cd ${NOXBIT}/
+#wget http://download.noxbit.com/ARMel/noxbit-pa-ARMel-32.tar.gz
+sudo wget http://download.noxbit.com/ARMhf/noxbit-pa-ARMhf-32.tar.gz
+sudo tar -xvzf noxbit-pa-ARMhf-32.tar.gz
+sudo rm noxbit-pa-ARMhf-32.tar.gz
+#(/home/pi/noxbit/STM-Hypervisor -config=/home/pi/noxbit/noxbit.cfg ) &
+
+cat << EOF | sudo tee /usr/lib/systemd/system/noxbit.service
+[Unit]
+Description=Noxbit
+After=network-online.target
+
+[Service]
+ExecStart=${NOXBIT}/STM-Hypervisor -config=${NOXBIT}/noxbit.cfg
+
+[Install]
+WantedBy=multi-user.target 
+EOF
+
+sudo sed -i '/uid/s/999/150062237/' ${NOXBIT}/noxbit.cfg
+sudo sed -i '/logfile/s:noxbit:log/noxbit:' ${NOXBIT}/noxbit.cfg
+sudo mcdit ${NOXBIT}/noxbit.cfg
+sudo mkdir /var/log/noxbit
+
+sudo systemctl enable noxbit
+sudo systemctl daemon-reload
+sudo systemctl start noxbit
+
+#------------------------------------------------------------------------------
+mcedit /home/pi/.kodi/userdata/addon_data/script.torrent-tv.ru/settings.xml
+
+#------------------------------------------------------------------------------
+
+sudo apt-get -y install nginx
+sudo systemctl enable nginx
+

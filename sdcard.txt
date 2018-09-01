@@ -14,3 +14,6 @@ EOF
 
 #mount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/
 sed -i '$imount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/' /etc/rc.local
+
+mount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/
+chown -R pi.pi  /mnt/flash/

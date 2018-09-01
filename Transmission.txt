@@ -7,5 +7,4 @@ sudo service transmission-daemon start
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
 
-
-
+# Web URL http://x.x.x.x:9091/transmission/web/
