@@ -16,14 +16,14 @@ wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
 unzip fdk-aac.zip && cd mstorsjo-fdk-aac*
 autoreconf -fiv
 time ./configure --prefix="$HOME/ffmpeg_build" --disable-shared
-time make -j4
+time make -j$(nproc)
 make install
 
 sudo apt-get -y install build-essential dh-make fakeroot yasm pkg-config libx264-dev libomxil-bellagio-dev checkinstall
 ?#sudo apt-get install libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev \
 libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
 
-Download and compile ffmpeg. This will take roughly 20 minutes.
+#Download and compile ffmpeg. This will take roughly 20 minutes.
 cd ~/ffmpeg_sources
 wget http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
 tar xjvf ffmpeg-snapshot.tar.bz2 && cd ffmpeg
@@ -40,11 +40,11 @@ export PKG_CONFIG_PATH
 #   --extra-ldflags="-L$HOME/ffmpeg_build/lib" --bindir="$HOME/bin" --extra-libs="-ldl" --enable-gpl \
 #   --enable-libass --enable-libfdk-aac --enable-libmp3lame --disable-ffplay \
 #   --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small
-time ./configure --prefix="$HOME/ffmpeg_build" --extra-cflags="-I$HOME/ffmpeg_build/include" \
+time ./configure --arch=armhf --target-os=linux --prefix="$HOME/ffmpeg_build" --extra-cflags="-I$HOME/ffmpeg_build/include" \
    --extra-ldflags="-L$HOME/ffmpeg_build/lib" --bindir="/usr/bin" --extra-libs="-ldl" --enable-gpl \
    --enable-libass --enable-libfdk-aac --enable-libmp3lame --disable-ffplay \
    --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small
-time make -j4
+time make -j$(nproc)
 
 ./ffmpeg -encoders | egrep 'h264|mp3'
 ./ffmpeg -decoders | egrep 'h264|mp3'
