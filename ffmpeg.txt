@@ -56,6 +56,7 @@ cat RELEASE ; ./ffbuild/version.sh
 checkinstall --nodoc --install=no --pkgversion=`cat VERSION` --exclude=/home/pi/ffmpeg_build/
 
 sudo dpkg -i ffmpeg_3.*_armhf.deb
+echo -e "#for h264_mmal decoder\ngpu_mem=192" | sudo tee -a /boot/config.txt
 
 #Lock the package so it won't get replaced by another version during software updates
 echo "ffmpeg hold" | sudo dpkg --set-selections
