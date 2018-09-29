@@ -29,6 +29,9 @@ DESC="Runs BubbleUPnPServer"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
+# to make sure ffmpeg is found and used if present in start directory.
+export PATH=.:${PATH}
+
 case "$1" in
 start)
   printf "%-50s" "Starting $NAME..."
