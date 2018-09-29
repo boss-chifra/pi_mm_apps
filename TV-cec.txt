@@ -1,3 +1,6 @@
+https://www.raspberrypi.org/forums/viewtopic.php?t=147422
+https://www.raspberrypi.org/forums/viewtopic.php?t=132473
+
 sudo mkdir /etc/local
 sudo chmod 760 /etc/local
 sudo apt-get install cec-utils
@@ -9,6 +12,23 @@ echo "tx 2F:82:30:00" | cec-client RPI -s -d 4
 echo "tx 10:47:4D:61:6B:61:72:6F:6E:69:20:54:56" | cec-client RPI -s -d 4
 EOF
 sudo chmod 760 /etc/local/startup.sh
+
+cat << "EOF" | sudo tee /etc/systemd/system/mystartup.service
+[Unit]
+Description=Custom user startup service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/etc/local/startup.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable mystartup
+sudo systemctl status mystartup
 
 cat << "EOF" | sudo tee /etc/local/shutdown.sh
 #!/bin/bash
