@@ -1,0 +1,35 @@
+sudo mkdir /etc/local
+sudo chmod 760 /etc/local
+sudo apt-get install cec-utils
+
+cat << "EOF" | sudo tee /etc/local/startup.sh
+#!/bin/bash
+echo "on 0" | cec-client RPI -s -d 1
+echo "tx 2F:82:30:00" | cec-client RPI -s -d 4
+echo "tx 10:47:4D:61:6B:61:72:6F:6E:69:20:54:56" | cec-client RPI -s -d 4
+EOF
+sudo chmod 760 /etc/local/startup.sh
+
+cat << "EOF" | sudo tee /etc/local/shutdown.sh
+#!/bin/bash
+/bin/echo "standby 0" | /usr/bin/cec-client RPI -s -d 1
+EOF
+sudo chmod 760 /etc/local/shutdown.sh
+
+cat << "EOF" | sudo tee /etc/systemd/system/myshutdown.service
+[Unit]
+Description=Custom user shutdown service
+DefaultDependencies=no
+Before=umount.target
+
+[Service]
+Type=oneshot
+ExecStart=/etc/local/shutdown.sh
+
+[Install]
+WantedBy=halt.target poweroff.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable myshutdown
+sudo systemctl status myshutdown
