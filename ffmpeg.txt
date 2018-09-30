@@ -2,6 +2,7 @@ https://www.raspberrypi.org/forums/viewtopic.php?t=73464
 http://www.redhenlab.org/home/the-cognitive-core-research-topics-in-red-hen/the-barnyard/hardware-encoding-with-the-raspberry-pi
 http://www.deb-multimedia.org/dists/stable/main/binary-armhf/
 https://stackoverflow.com/questions/40175644/ffmpeg-hardware-acceleration-on-raspberry-pi
+http://deb-multimedia.org/dists/unstable/main/binary-armhf/
 
 use h264_mmal hardware accelerated decoder
 use h264_omx tells FFMpeg to use the h264_omx encoder
@@ -19,7 +20,8 @@ time ./configure --prefix="$HOME/ffmpeg_build" --disable-shared
 time make -j$(nproc)
 make install
 
-sudo apt-get -y install build-essential dh-make fakeroot yasm pkg-config libx264-dev libomxil-bellagio-dev checkinstall
+sudo apt-get -y install build-essential dh-make fakeroot yasm pkg-config libx264-dev libomxil-bellagio-dev checkinstall \
+libsoxr-dev libopus-dev
 ?#sudo apt-get install libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev \
 libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
 
@@ -42,8 +44,9 @@ export PKG_CONFIG_PATH
 #   --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small
 time ./configure --arch=armhf --target-os=linux --prefix="$HOME/ffmpeg_build" --extra-cflags="-I$HOME/ffmpeg_build/include" \
    --extra-ldflags="-L$HOME/ffmpeg_build/lib" --bindir="/usr/bin" --extra-libs="-ldl" --enable-gpl \
-   --enable-libass --enable-libfdk-aac --enable-libmp3lame --disable-ffplay \
-   --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small
+   --enable-libass --enable-libfdk-aac --enable-libmp3lame --disable-ffplay --enable-libx264 \
+   --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi --enable-small --enable-libsoxr --enable-libvorbis \
+   --enable-libopus
 time make -j$(nproc)
 
 ./ffmpeg -encoders | egrep 'h264|mp3'
