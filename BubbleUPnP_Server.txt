@@ -105,8 +105,9 @@ cat << "EOF" | tee /opt/bubbleupnpserver/ffmpeg
 #ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;s/-i/-report -loglevel 40 -i/'`
 ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;'`
 
-logger -t FFMPEG_INPUT "$*"
-logger -t FFMPEG_OUTPUT "$ARGS"
-`which ffmpeg` $ARGS
+logger -t FFMPEG_INPUT "\"$*\""
+logger -t FFMPEG_OUTPUT "\"$ARGS\""
+FFMPEG_CMD $ARGS
 EOF
 sudo chmod +x /opt/bubbleupnpserver/ffmpeg
+FFMPEG_CMD=`which ffmpeg` ; sed -i "s|FFMPEG_CMD|${FFMPEG_CMD}|" /opt/bubbleupnpserver/ffmpeg
