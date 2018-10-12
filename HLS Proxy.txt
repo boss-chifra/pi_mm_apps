@@ -1,0 +1,28 @@
+http://www.hls-proxy.com/docs.php
+
+cd /home/pi
+wget https://www.dropbox.com/sh/4wd8raoak3d7c0u/AABaOftj9k04RVqCH8tllY8ra/5.2.0/hls-proxy-5.2.0.linux-armv7.zip?dl=0 -O hls-proxy.linux-armv7.zip
+sudo unzip -d /opt/hls-proxy hls-proxy.linux-armv7.zip
+sudo chown -R pi.pi /opt/hls-proxy
+
+cat << "EOF" | sudo tee /etc/systemd/system/hls-proxy.service
+[Unit]
+Description=HLS-PROXY start script
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/opt/hls-proxy/hls-proxy
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cp -p /opt/hls-proxy/default.json /opt/hls-proxy/default.json_orig
+sed -i '1,/"port"/ s/80/8080/' /opt/hls-proxy/default.json
+
+sudo systemctl daemon-reload
+sudo systemctl enable hls-proxy
+sudo systemctl start hls-proxy
+systemctl status hls-proxy
