@@ -1,3 +1,8 @@
+Some usefull links
+https://hub.docker.com/r/sybdata/hlsproxy/
+https://github.com/sybdata/acearm
+https://github.com/sybdata/hlsproxy-arm
+
 http://www.hls-proxy.com/docs.php
 
 cd /home/pi
