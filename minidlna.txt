@@ -17,6 +17,8 @@ sudo systemctl start minidlna
 #optional rebuild database
 crontab -l > mycron
 #echo "00 05    * * * sudo systemctl stop minidlna | /usr/bin/logger -t ALEXM2 ; sudo rm /var/cache/minidlna/files.db | /usr/bin/logger -t ALEXM2 ; sudo systemctl start minidlna | /usr/bin/logger -t ALEXM2" >> mycron
-echo "01 05    * * * sudo /etc/init.d/minidlna force-reload" >> mycron
+#echo "01 05    * * * sudo /etc/init.d/minidlna force-reload" >> mycron
+echo -e "\n#rebuild database" >> mycron
+echo "01 05    * * 5 sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R"  >> mycron
 crontab mycron
 rm mycron

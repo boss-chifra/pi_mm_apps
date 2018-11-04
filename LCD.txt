@@ -1,0 +1,11 @@
+https://www.aliexpress.com/item/for-Raspberry-Pi-3-Model-B-3-5-Inches-Touch-Screen-Display-Monitor-480x320-LCD-Kit/32837597848.html?tt=sns_none&aff_platform=default&cpt=1540927225528&sk=cHnT1kqH&aff_trace_key=25059f442c814baaa983425bdaff482b-1540927225528-05533-cHnT1kqH&terminal_id=666b6c8091e54d7ba1098e96768582f1
+https://github.com/notro/fbtft/wiki#install
+https://www.raspberrypi.org/forums/viewtopic.php?t=95955
+https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=91764&start=75#p662735
+https://github.com/goodtft/LCD-show
+http://www.lcdwiki.com/RaspberryPi-LCD-Driver
+https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=143581&sid=a1ac41b05525111289d86e5529ae7541&start=25
+http://ozzmaker.com/product/piscreen-3-5-tft-with-touch-for-the-raspberry-pi/
+http://lallafa.de/blog/2015/03/fbtft-setup-on-modern-raspbian/
+https://www.raspberrypi.org/forums/viewtopic.php?t=111817#p1041032
+https://www.willprice.org/2017/09/16/adventures-with-tft-screens-for-raspberry-pi.html
