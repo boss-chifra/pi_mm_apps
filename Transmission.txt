@@ -8,4 +8,7 @@ sudo systemctl start transmission-daemon
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
 
+#add minidlna user to group debian-transmission
+id -u minidlna > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
+
 # Web URL http://x.x.x.x:9091/transmission/web/

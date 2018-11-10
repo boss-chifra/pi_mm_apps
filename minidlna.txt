@@ -14,11 +14,14 @@ echo fs.inotify.max_user_watches=200000 | sudo tee /etc/sysctl.d/90-minidlna.con
 sysctl fs.inotify.max_user_watches | grep --color {[0-9],}
 sudo systemctl start minidlna
 
+#add minidlna user to group debian-transmission
+id -u debian-transmission > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
+
 #optional rebuild database
 crontab -l > mycron
 #echo "00 05    * * * sudo systemctl stop minidlna | /usr/bin/logger -t ALEXM2 ; sudo rm /var/cache/minidlna/files.db | /usr/bin/logger -t ALEXM2 ; sudo systemctl start minidlna | /usr/bin/logger -t ALEXM2" >> mycron
 #echo "01 05    * * * sudo /etc/init.d/minidlna force-reload" >> mycron
 echo -e "\n#rebuild database" >> mycron
-echo "01 05    * * 5 sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R"  >> mycron
+echo '01 05    * * 5 sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R'  >> mycron
 crontab mycron
 rm mycron

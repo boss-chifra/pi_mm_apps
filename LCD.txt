@@ -9,3 +9,21 @@ http://ozzmaker.com/product/piscreen-3-5-tft-with-touch-for-the-raspberry-pi/
 http://lallafa.de/blog/2015/03/fbtft-setup-on-modern-raspbian/
 https://www.raspberrypi.org/forums/viewtopic.php?t=111817#p1041032
 https://www.willprice.org/2017/09/16/adventures-with-tft-screens-for-raspberry-pi.html
+
+
+#ENABLE
+echo "#configure tft display" | sudo tee -a /boot/config.txt
+echo "dtoverlay=piscreen,speed=24000000" | sudo tee -a /boot/config.txt
+
+sudo sed -i '/dtparam=spi/s/^#//g' /boot/config.txt
+if ! grep --silent fbcon /boot/cmdline.txt
+then
+sudo sed -i "$ s|$| fbcon=map:10 fbcon=font:ProFont6x11 logo.nologo|" /boot/cmdline.txt
+fi
+
+
+#DISABLE
+sudo sed -i '/dtparam=spi/s/^/#/g' /boot/config.txt
+sudo sed -i 's/fbcon.*nologo//' /boot/cmdline.txt
+sudo sed -i '/tft/d;/piscreen/d' /boot/config.txt
+
