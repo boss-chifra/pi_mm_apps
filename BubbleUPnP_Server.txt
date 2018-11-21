@@ -85,22 +85,24 @@ EOF
 sudo ln /opt/bubbleupnpserver/BubbleUPnPServer /etc/init.d/BubbleUPnPServer
 sudo chmod 755 /etc/init.d/BubbleUPnPServer
 sudo update-rc.d BubbleUPnPServer defaults
-systemctl start BubbleUPnPServer
+sudo systemctl start BubbleUPnPServer
 tail -f /opt/bubbleupnpserver/BubbleUPnPServer.log.0
-systemctl stop BubbleUPnPServer
 
+sudo systemctl stop BubbleUPnPServer
+sleep 120
 sed -i '/disableUPnPPortForwarding/ s/false/true/' /opt/bubbleupnpserver/configuration.xml
 sed -i '/allowWANConfigurationUI/ s/true/false/' /opt/bubbleupnpserver/configuration.xml
 sed -i '/allowWANConnections/ s/true/false/' /opt/bubbleupnpserver/configuration.xml
 egrep --color 'disableUPnPPortForwarding|allowWANConfigurationUI|allowWANConnections' /opt/bubbleupnpserver/configuration.xml
-systemctl start BubbleUPnPServer
+sudo systemctl start BubbleUPnPServer
 grep "started Jetty connector on" /opt/bubbleupnpserver/BubbleUPnPServer.log.0 | grep -v 127.0.0.1 | grep 58050 | tail -n1 | cut -d: -f4,5
 # Web URL http://x.x.x.x:58050/#main
 
+[ `which ffmpeg` ] && echo "Cool, FFMPEG already installed" || echo -e "Please install FFMPEG\nPlease run sudo apt-get install ffmpeg"
 
 cat << "EOF" | tee /opt/bubbleupnpserver/ffmpeg
 #!/bin/bash
-#Support for encoding to HW H.264 codec
+#Support for HW encoding to H.264 codec
 
 #ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;s/-i/-report -loglevel 40 -i/'`
 ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;'`

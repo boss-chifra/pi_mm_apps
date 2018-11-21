@@ -2,11 +2,11 @@ FILE="/etc/minidlna.conf"
 
 sudo apt-get -y install minidlna
 sudo systemctl stop minidlna
+sudo mkdir /media/music; sudo chown pi.pi /media/music; sudo chmod 755 /media/music
 
-sed -i '' ${FILE}
 sudo sed -i '/inotify=yes/s/^#//g; /friendly_name/s/^#//g; /friendly_name/ s/=/=malinka: pi/' ${FILE}
-sudo sed -i '/^media_dir=/s/^/#/; /#media_dir/a  media_dir=A,\/media\/music\nmedia_dir=V,\/media\/video\nmedia_dir=V,\/mnt\/flash' ${FILE}
-sudo sed -i '/merge_media_dirs/s/^#//g' ${FILE}
+sudo sed -i '/^media_dir=/s/^/#/; /#media_dir/a  media_dir=A,\/media\/music\nmedia_dir=V,\/media\/video\nmedia_dir=V,\/media\/flash' ${FILE}
+sudo sed -i '/merge_media_dirs/s/^#//g; /merge_media_dirs/ s/no/yes/' ${FILE}
 sudo sed -i '/#root_container/a  root_container=.' ${FILE}
 
 sysctl fs.inotify.max_user_watches | grep --color {[0-9],}
@@ -15,8 +15,10 @@ sysctl fs.inotify.max_user_watches | grep --color {[0-9],}
 sudo systemctl start minidlna
 
 #add minidlna user to group debian-transmission
+#only if user minidlna exists
 id -u debian-transmission > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
 
+cd ~
 #optional rebuild database
 crontab -l > mycron
 #echo "00 05    * * * sudo systemctl stop minidlna | /usr/bin/logger -t ALEXM2 ; sudo rm /var/cache/minidlna/files.db | /usr/bin/logger -t ALEXM2 ; sudo systemctl start minidlna | /usr/bin/logger -t ALEXM2" >> mycron

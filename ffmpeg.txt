@@ -49,8 +49,8 @@ time ./configure --arch=armhf --target-os=linux --prefix="$HOME/ffmpeg_build" --
    --enable-libopus
 time make -j$(nproc)
 
-./ffmpeg -encoders | egrep 'h264|mp3'
-./ffmpeg -decoders | egrep 'h264|mp3'
+./ffmpeg -encoders | egrep 'h264|mp3|aac'
+./ffmpeg -decoders | egrep 'h264|mp3|aac'
 ./ffmpeg -h encoder=h264_omx
 
 #cd ~/ffmpeg_sources/ffmpeg/
@@ -59,7 +59,9 @@ cat RELEASE ; ./ffbuild/version.sh
 checkinstall --nodoc --install=no --pkgversion=`cat VERSION` --exclude=/home/pi/ffmpeg_build/
 
 sudo dpkg -i ffmpeg_3.*_armhf.deb
+sudo cp -p /boot/config.txt /boot/config.txt.h264_mmal.`date +%d%m%Y`
 echo -e "#for h264_mmal decoder\ngpu_mem=192" | sudo tee -a /boot/config.txt
+diff -U2 /boot/config.txt.h264_mmal.`date +%d%m%Y` /boot/config.txt
 
 #Lock the package so it won't get replaced by another version during software updates
 echo "ffmpeg hold" | sudo dpkg --set-selections

@@ -5,7 +5,7 @@ https://github.com/sybdata/hlsproxy-arm
 
 http://www.hls-proxy.com/docs.php
 
-cd /home/pi
+cd ~
 wget https://www.dropbox.com/sh/4wd8raoak3d7c0u/AAC1VlMYAcnaAALhuiObkkRLa/5.2.4/hls-proxy-5.2.4.linux-armv7.zip?dl=0 -O hls-proxy.linux-armv7.zip
 sudo unzip -d /opt/hls-proxy hls-proxy.linux-armv7.zip
 sudo chown -R pi.pi /opt/hls-proxy

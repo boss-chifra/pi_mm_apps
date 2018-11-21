@@ -1,14 +1,22 @@
 sudo apt-get install -y transmission-daemon transmission-cli transmission-common
 sudo service transmission-daemon stop
 
+sudo cp -p /etc/transmission-daemon/settings.json /etc/transmission-daemon/settings.json_orig
 sudo sed -i '/rpc-whitelist"/s/1"/1,192.168.*,10.*"/' /etc/transmission-daemon/settings.json
 sudo sed -i '/download-dir/s:/var/lib/transmission-daemon/downloads:/media/video:' /etc/transmission-daemon/settings.json
 sudo sed -i '/umask/s/18/2/' /etc/transmission-daemon/settings.json
-sudo systemctl start transmission-daemon
+sudo sed -i '/port-forwarding-enabled/s/false/true/' /etc/transmission-daemon/settings.json
+sudo sed -i '/lpd-enabled/s/false/true/' /etc/transmission-daemon/settings.json
+sudo sed -i '/peer-port-random-on-start/s/false/true/' /etc/transmission-daemon/settings.json
+
+sudo chown pi.pi /media/video/; sudo chown pi.pi /media/flash/
+sudo chmod 755 /media/video/  ; sudo chmod 755 /media/flash/
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
+sudo systemctl start transmission-daemon
 
 #add minidlna user to group debian-transmission
+#only if user minidlna exists
 id -u minidlna > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
 
 # Web URL http://x.x.x.x:9091/transmission/web/
