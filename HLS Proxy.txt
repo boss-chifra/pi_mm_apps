@@ -31,6 +31,26 @@ EOF
 
 cp -p /opt/hls-proxy/default.json /opt/hls-proxy/default.json_orig
 sed -i '1,/"port"/ s/80/8080/' /opt/hls-proxy/default.json
+sed -i '6 s:^://:;8 s:^://:;10 s:^://:;12 s:^://:;13 s:^://:;14 s:^://:;' /opt/hls-proxy/default.json
+
+cat << EOF > /opt/hls-proxy/local.json
+{
+    "playlists": [
+        {
+            "name": "mytv",
+            "type": "file",
+            "uri": "/media/video/mytv.m3u8",
+            "localCopy": "",
+            "isUseLocalAceStreamMediaProxy": false,
+            "aceStreamMediaProxyURL": ""
+        }
+    ],
+    "grouping": {
+        "isGroupDetectionEnabled": false,
+        "isAddEXTGRP": false
+    }
+}
+EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable hls-proxy

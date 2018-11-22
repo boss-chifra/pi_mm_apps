@@ -10,7 +10,7 @@ sudo sed -i '/lpd-enabled/s/false/true/' /etc/transmission-daemon/settings.json
 sudo sed -i '/peer-port-random-on-start/s/false/true/' /etc/transmission-daemon/settings.json
 
 sudo chown pi.pi /media/video/; sudo chown pi.pi /media/flash/
-sudo chmod 755 /media/video/  ; sudo chmod 755 /media/flash/
+sudo chmod 775 /media/video/  ; sudo chmod 775 /media/flash/
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
 sudo systemctl start transmission-daemon
