@@ -7,7 +7,41 @@ http://denvycom.com/blog/playing-audio-over-bluetooth-on-rasbperry-pi-command-li
 https://forum.armbian.com/topic/6480-bluealsa-bluetooth-audio-using-alsa-not-pulseaudio/
 https://www.raspberrypi.org/forums/viewtopic.php?t=194990
 
+----------------------------------------
+#Bluetooth
 
+sudo apt-get -y install bluealsa
+#sudo systemctl restart hciuart
+#sudo systemctl restart bluetooth
+sudo reboot
+
+sudo bluetoothctl
+[bluetooth]# scan on
+[bluetooth]# devices
+[bluetooth]# [NEW] Device 0C:A6:94:99:FA:4A HK Esquire 2
+
+[bluetooth]# scan off
+[bluetooth]# pair 0C:A6:94:99:FA:4A
+[bluetooth]# trust 0C:A6:94:99:FA:4A
+[bluetooth]# connect 0C:A6:94:99:FA:4A
+[bluetooth]# info 0C:A6:94:99:FA:4A
+[bluetooth]# exit
+
+MAC="0C:A6:94:99:FA:4A"
+[ -d /etc/local ] || sudo mkdir /etc/local
+cat << EOF | sudo tee /etc/local/bc.sh
+#!/bin/bash
+echo -e "connect ${MAC}\nquit" | sudo bluetoothctl
+EOF
+cat << EOF | sudo tee /etc/local/bd.sh
+#!/bin/bash
+echo -e "disconnect ${MAC}\nquit" | sudo bluetoothctl
+EOF
+sudo chmod ugo+x /etc/local/b[cd].sh
+
+echo -e "info 0C:A6:94:99:FA:4A\nquit" | sudo bluetoothctl
+
+------------------------------------
 #Configure Audio
 
 cat << EOF | sudo tee /etc/asound.conf
@@ -41,40 +75,6 @@ ctl.esquire2 {
     type bluealsa
 }
 EOF
-
-#Bluetooth
-
-sudo apt-get -y install bluealsa
-
-sudo systemctl restart hciuart
-sudo systemctl restart bluetooth
-
-bluetoothctl
-[bluetooth]# scan on
-[bluetooth]# devices
-[bluetooth]# [NEW] Device 0C:A6:94:99:FA:4A HK Esquire 2
-
-[bluetooth]# scan off
-[bluetooth]# pair 0C:A6:94:99:FA:4A
-[bluetooth]# trust 0C:A6:94:99:FA:4A
-[bluetooth]# connect 0C:A6:94:99:FA:4A
-[bluetooth]# info 0C:A6:94:99:FA:4A
-[bluetooth]# exit
-
-MAC="0C:A6:94:99:FA:4A"
-[ -d /etc/local ] || sudo mkdir /etc/local
-cat << EOF | sudo tee /etc/local/bc.sh
-#!/bin/bash
-echo -e "connect ${MAC}\nquit" | sudo bluetoothctl
-EOF
-
-cat << EOF | sudo tee /etc/local/bd.sh
-#!/bin/bash
-echo -e "disconnect ${MAC}\nquit" | sudo bluetoothctl
-EOF
-sudo chmod ugo+x /etc/local/b[cd].sh
-
-echo -e "info 0C:A6:94:99:FA:4A\nquit" | bluetoothctl
 
 -----------------------------------------------------
 
