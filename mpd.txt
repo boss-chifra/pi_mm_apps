@@ -49,6 +49,18 @@ sudo chmod 666 /var/lib/mpd/playlists/*
 sudo systemctl restart mpd
 mpc enable only "Analog Jack"
 
+[ -d /etc/local ] || sudo mkdir /etc/local
+cat <<EOF | tee /etc/local/mpd_start_morning.sh
+#!/bin/bash
+
+/usr/bin/amixer -D hw sset "PCM" 73% ;
+/usr/bin/mpc enable only "Analog Jack" ;
+/usr/bin/mpc clear ;
+/usr/bin/mpc add http://ic7.101.ru:8000/a199 ;
+/usr/bin/mpc play ;
+EOF
+chmod u+x /etc/local/mpd_start_morning.sh
+
 ----------------------------------------------------
 mpc add http://air2.radiorecord.ru:805/rr_320
 mpc playlist
