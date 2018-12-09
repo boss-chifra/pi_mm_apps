@@ -104,12 +104,23 @@ cat << "EOF" | tee /opt/bubbleupnpserver/ffmpeg
 #!/bin/bash
 #Support for HW encoding to H.264 codec
 
-#ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;s/-i/-report -loglevel 40 -i/'`
-ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;'`
+FFMPEG_CMD=`which ffmpeg`
+#determination FFMPEG version
+VER=`${FFMPEG_CMD} -version | grep -o "ffmpeg version [0-9]" | cut -d' ' -f3`
+
+if [ ${VER} == 3 ]; then
+    #ffmpeg3
+    ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/15000k/;/h264_omx/s/-profile:v high //'`
+else
+    #ffmpeg4
+    ARGS=`echo "$*" | sed '/libx264/ s/libx264/h264_omx/;/h264_omx/ s/ -preset medium//;/h264_omx/ s/8000k/12000k/;'`
+fi
+
+#debug
+#ARGS=`echo ${ARGS} | sed 's/-i/-report -loglevel 40 -i/'`
 
 logger -t FFMPEG_INPUT "\"$*\""
 logger -t FFMPEG_OUTPUT "\"$ARGS\""
-FFMPEG_CMD $ARGS
+${FFMPEG_CMD} $ARGS
 EOF
-sudo chmod +x /opt/bubbleupnpserver/ffmpeg
-FFMPEG_CMD=`which ffmpeg` ; sed -i "s|FFMPEG_CMD|${FFMPEG_CMD}|" /opt/bubbleupnpserver/ffmpeg
+#sudo chmod +x /opt/bubbleupnpserver/ffmpeg

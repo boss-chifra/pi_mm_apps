@@ -21,9 +21,8 @@ time make -j$(nproc)
 make install
 
 sudo apt-get -y install build-essential dh-make fakeroot yasm pkg-config libx264-dev libomxil-bellagio-dev checkinstall \
-libsoxr-dev libopus-dev
-?#sudo apt-get install libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev \
-libxcb-xfixes0-dev pkg-config texinfo zlib1g-dev
+libsoxr-dev libopus-dev libvorbis-dev
+#? libva-dev
 
 #Download and compile ffmpeg. This will take roughly 20 minutes.
 cd ~/ffmpeg_sources
@@ -58,9 +57,9 @@ mkdir -p ~/ffmpeg_build/share/{doc,man}
 cat RELEASE ; ./ffbuild/version.sh
 checkinstall --nodoc --install=no --pkgversion=`cat VERSION` --exclude=/home/pi/ffmpeg_build/
 
-sudo dpkg -i ffmpeg_3.*_armhf.deb
+sudo dpkg -i ffmpeg_*_armhf.deb
 sudo cp -p /boot/config.txt /boot/config.txt.h264_mmal.`date +%d%m%Y`
-echo -e "#for h264_mmal decoder\ngpu_mem=192" | sudo tee -a /boot/config.txt
+echo -e "\n#for h264_mmal decoder\ngpu_mem=192" | sudo tee -a /boot/config.txt
 diff -U2 /boot/config.txt.h264_mmal.`date +%d%m%Y` /boot/config.txt
 
 #Lock the package so it won't get replaced by another version during software updates
