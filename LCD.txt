@@ -12,7 +12,7 @@ https://www.willprice.org/2017/09/16/adventures-with-tft-screens-for-raspberry-p
 
 
 #ENABLE
-echo "#configure tft display" | sudo tee -a /boot/config.txt
+echo -e "\n#configure tft display" | sudo tee -a /boot/config.txt
 echo "dtoverlay=piscreen,speed=24000000" | sudo tee -a /boot/config.txt
 
 sudo sed -i '/dtparam=spi/s/^#//g' /boot/config.txt

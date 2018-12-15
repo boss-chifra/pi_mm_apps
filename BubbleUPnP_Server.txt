@@ -104,6 +104,8 @@ cat << "EOF" | tee /opt/bubbleupnpserver/ffmpeg
 #!/bin/bash
 #Support for HW encoding to H.264 codec
 
+#delete current dir . to avoid loop
+PATH=${PATH#*:}
 FFMPEG_CMD=`which ffmpeg`
 #determination FFMPEG version
 VER=`${FFMPEG_CMD} -version | grep -o "ffmpeg version [0-9]" | cut -d' ' -f3`
