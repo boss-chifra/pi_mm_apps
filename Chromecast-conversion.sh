@@ -15,12 +15,15 @@
 # cast.sh mp4 /home/user/divx /home/user/chromecastvideos
 # or
 # cast.sh mkv /home/user/divx /home/user/chromecastvideos
+# ./Chromecast-conversion.sh mkv . .
 #########################
 
 VCODEC="h264_omx"
 V_CODEC_ARG="-vsync 0 -keyint_min 0 -g 100 -b:v 1000k"
 VCODEC="libx264"
 V_CODEC_ARG="-vsync 0 -profile:v main -level 3.1 -qmax 22 -qmin 20 -x264opts no-cabac:ref=2"
+#audio codec args
+A_CODEC_ARG="-ab 192k -ac 2 -absf aac_adtstoasc"
 
 FFMPEG="/usr/bin/ffmpeg"
 
@@ -69,7 +72,7 @@ fi
 fi
 
 # set format
-if [ $outmode=mp4 ]
+if [ $outmode = mp4 ]
         then
          outformat=mp4
         else
@@ -156,7 +159,7 @@ do
 
         if ffmpeg -i "$filelist" 2>&1 | grep Audio: | grep aac || ffmpeg -i "$filelist" 2>&1 | grep Audio: | grep mp3  #check audio codec
            then
-            acodec=copy
+            acodec=copy; A_CODEC_ARG=""
            else
             acodec=libfdk_aac
         fi
@@ -167,8 +170,8 @@ do
         echo "Container: $outformat${reset}"
 
 # using ffmpeg for real converting
-        echo "ffmpeg -threads 16 -i $filelist -y -f $outformat -acodec $acodec -ab 192k -ac 2 -absf aac_adtstoasc -async 1 -vcodec $vcodec ${V_CODEC_ARG} $indir/castable/${filelist%.*}.$outmode"
-        ${FFMPEG} -threads 16 -i "$filelist" -y -f $outformat -acodec $acodec -ab 192k -ac 2 -absf aac_adtstoasc -async 1 -vcodec $vcodec ${V_CODEC_ARG} "$indir/castable/${filelist%.*}.$outmode" < /dev/null
+        echo "ffmpeg -threads 16 -i  $filelist  -y -f $outformat -acodec $acodec ${A_CODEC_ARG} -async 1 -vcodec $vcodec ${V_CODEC_ARG}  $indir/castable/${filelist%.*}.$outmode"
+           ${FFMPEG} -threads 16 -i "$filelist" -y -f $outformat -acodec $acodec ${A_CODEC_ARG} -async 1 -vcodec $vcodec ${V_CODEC_ARG} "$indir/castable/${filelist%.*}.$outmode" < /dev/null
 
 done
         echo ALL Processed!

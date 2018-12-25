@@ -3,6 +3,7 @@ https://w1.fi/cgit/hostap/plain/hostapd/hostapd.conf
 https://elinux.org/RPI-Wireless-Hotspot
 https://github.com/billz/raspap-webgui
 https://howtoraspberrypi.com/create-a-wi-fi-hotspot-in-less-than-10-minutes-with-pi-raspberry/
+https://wiki.gentoo.org/wiki/Hostapd#802.11b.2Fg.2Fn_triple_AP
 
 sudo apt-get -y install dnsmasq hostapd
 sudo systemctl stop dnsmasq ; sudo systemctl stop hostapd
@@ -28,7 +29,7 @@ wpa_passphrase=${WPASSWD}
 
 macaddr_acl=0
 hw_mode=g
-auth_algs=1
+auth_algs=1           # 1=wpa, 2=wep, 3=both
 ignore_broadcast_ssid=0
 wpa=2
 wpa_key_mgmt=WPA-PSK

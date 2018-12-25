@@ -17,6 +17,7 @@ sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
 sudo systemctl start transmission-daemon
 
+ln -s /var/lib/transmission-daemon/.config/transmission-daemon/torrents ~/transmission-torrents
 #add minidlna user to group debian-transmission
 #only if user minidlna exists
 id -u minidlna > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
