@@ -19,9 +19,11 @@
 #########################
 
 VCODEC="h264_omx"
-V_CODEC_ARG="-vsync 0 -keyint_min 0 -g 100 -b:v 1000k"
-VCODEC="libx264"
-V_CODEC_ARG="-vsync 0 -profile:v main -level 3.1 -qmax 22 -qmin 20 -x264opts no-cabac:ref=2"
+V_CODEC_ARG="-vsync 0 -keyint_min 0 -g 100 -b:v 1000k -profile:v high -level 4.1"
+
+#VCODEC="libx264"
+#V_CODEC_ARG="-vsync 0 -profile:v main -level 3.1 -qmax 22 -qmin 20 -x264opts no-cabac:ref=2"
+
 #audio codec args
 A_CODEC_ARG="-ab 192k -ac 2 -absf aac_adtstoasc"
 
@@ -44,6 +46,7 @@ if [ $outmode = "mp4" ] || [ $outmode = "mkv" ]
 fi
 else
 echo "Working mode is missing. You should set a correct target format like mp4 or mkv"
+echo "./Chromecast-conversion.sh mkv . ."
 exit
 fi
 

@@ -2,7 +2,7 @@ FILE="/etc/minidlna.conf"
 
 sudo apt-get -y install minidlna
 sudo systemctl stop minidlna
-sudo mkdir /media/{music,flash,video}; sudo chown pi.pi /media/{music,flash,video}; sudo chmod 755 /media/{music,flash,video}
+sudo mkdir /media/{music,flash,video}; sudo chown pi.pi /media/{music,flash,video}; sudo chmod 775 /media/{music,flash,video}
 
 
 sudo sed -i '/inotify=yes/s/^#//g; /friendly_name/s/^#//g; /friendly_name/ s/=/=malinka: pi/' ${FILE}

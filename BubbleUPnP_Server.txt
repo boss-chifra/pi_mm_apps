@@ -108,6 +108,8 @@ cat << "EOF" | tee /opt/bubbleupnpserver/ffmpeg
 #delete current dir . to avoid loop
 PATH=${PATH#*:}
 FFMPEG_CMD=`which ffmpeg`
+#FFMPEG_CMD="/usr/bin/ffmpeg"
+
 #determination FFMPEG version
 VER=`${FFMPEG_CMD} -version | grep -o "ffmpeg version [0-9]" | cut -d' ' -f3`
 

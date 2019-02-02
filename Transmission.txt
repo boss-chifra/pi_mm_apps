@@ -13,7 +13,7 @@ sudo sed -i '/alt-speed-down/s/50/1000/' /etc/transmission-daemon/settings.json
 sudo sed -i '/alt-speed-up/s/50/1000/' /etc/transmission-daemon/settings.json
 
 sudo chown pi.pi /media/video/; sudo chown pi.pi /media/flash/
-sudo chown pi.pi /media/{flash,video}; sudo chmod 755 /media/{flash,video}
+sudo chown pi.pi /media/{flash,video}; sudo chmod 775 /media/{flash,video}
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
 sudo systemctl start transmission-daemon
