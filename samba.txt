@@ -1,10 +1,11 @@
-sudo apt-get install samba
+cd ~
+sudo apt-get -y install samba
 sudo systemctl stop smbd
 sudo systemctl stop nmbd
 
 sudo cp -p /etc/samba/smb.conf /etc/samba/smb.conf_orig
 sudo sed -i '/workgroup =/s/WORKGROUP/LABS/' /etc/samba/smb.conf
-sed -i '/LABS/a netbios name = malinka'   /etc/samba/smb.conf
+sudo sed -i '/LABS/a netbios name = malinka' /etc/samba/smb.conf
 echo -e "/netbios name = malinka/a
 local master = yes
     os level = 255

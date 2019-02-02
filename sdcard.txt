@@ -1,19 +1,24 @@
 https://developer.ridgerun.com/wiki/index.php/High_performance_SD_card_tuning_using_the_EXT4_file_system
+https://www.blogperle.de/raspberry-pi-emergency-mode-and-root-account-locked-mounting-usb-disk-with-fstab/
 
-mkfs.ext4 /dev/sda1
-umount /dev/sda1
-tune2fs -o journal_data_writeback /dev/sda1
-tune2fs -O ^has_journal /dev/sda1
-tune2fs -r0 /dev/sda1
-e2fsck -f /dev/sda1
-mkdir /mnt/flash
+#Create new FS
+#mkfs.ext4 /dev/sda1
 
-cat << EOF >> /etc/fstab
-UUID="d908ca3b-8252-41ee-ad8c-659a4c7f726d"             /mnt/flash      ext4    noauto,noatime,data=writeback        0       0
+#Enable writeback mode.
+#Written to the disk before the journal. This mode will typically provide the best ext4 performance
+sudo tune2fs -o journal_data_writeback /dev/sda2
+#Delete has_journal option
+sudo tune2fs -O ^has_journal /dev/sda2
+sudo tune2fs -r0 /dev/sda2
+
+sudo fsck -fy /dev/sda2
+sudo mkdir /media/flash; sudo chown pi.pi /media/flash; sudo chmod 755 /media/flash
+
+cat << EOF | sudo tee -a /etc/fstab
+/dev/sda2             /media/flash      ext4    defaults,nofail,x-systemd.device-timeout=5,noatime,nodiratime,data=writeback        0       0
 EOF
 
-#mount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/
-sed -i '$imount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/' /etc/rc.local
-
-mount -t ext4 -o noatime,data=writeback /dev/sda1 /mnt/flash/
-chown -R pi.pi  /mnt/flash/
+----------------------------------------------------------------
+sudo tune2fs -l /dev/mmcblk0p2 | grep Last\ c
+sudo touch /forcefsck
+sudo reboot

@@ -5,7 +5,7 @@ cd /home/pi
 wget http://www.bubblesoftapps.com/bubbleupnpserver/BubbleUPnPServer-distrib.zip -O bubbleupnpserver.zip
 sudo unzip -d /opt/bubbleupnpserver bubbleupnpserver.zip
 sudo chown -R pi.pi /opt/bubbleupnpserver
-sudo apt-get install openjdk-9-jre-headless
+sudo apt-get -y install openjdk-9-jre-headless
 
 cat << "EOF" > /opt/bubbleupnpserver/BubbleUPnPServer
 #!/bin/bash
@@ -86,6 +86,7 @@ sudo ln /opt/bubbleupnpserver/BubbleUPnPServer /etc/init.d/BubbleUPnPServer
 sudo chmod 755 /etc/init.d/BubbleUPnPServer
 sudo update-rc.d BubbleUPnPServer defaults
 sudo systemctl start BubbleUPnPServer
+sleep 10
 tail -f /opt/bubbleupnpserver/BubbleUPnPServer.log.0
 
 sudo systemctl stop BubbleUPnPServer
@@ -98,7 +99,7 @@ sudo systemctl start BubbleUPnPServer
 grep "started Jetty connector on" /opt/bubbleupnpserver/BubbleUPnPServer.log.0 | grep -v 127.0.0.1 | grep 58050 | tail -n1 | cut -d: -f4,5
 # Web URL http://x.x.x.x:58050/#main
 
-[ `which ffmpeg` ] && echo "Cool, FFMPEG already installed" || echo -e "Please install FFMPEG\nPlease run sudo apt-get install ffmpeg"
+[ `which ffmpeg` ] && echo "Cool, FFMPEG already installed" || echo -e "Please install FFMPEG\nPlease run sudo apt-get -y install ffmpeg"
 
 cat << "EOF" | tee /opt/bubbleupnpserver/ffmpeg
 #!/bin/bash
@@ -125,4 +126,5 @@ logger -t FFMPEG_INPUT "\"$*\""
 logger -t FFMPEG_OUTPUT "\"$ARGS\""
 ${FFMPEG_CMD} $ARGS
 EOF
-#sudo chmod +x /opt/bubbleupnpserver/ffmpeg
+chmod +x /opt/bubbleupnpserver/ffmpeg
+rm ~/bubbleupnpserver.zip
