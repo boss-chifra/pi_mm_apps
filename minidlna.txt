@@ -27,3 +27,4 @@ echo -e "\n#rebuild database" >> mycron
 echo '01 05    * * 5 sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R'  >> mycron
 crontab mycron
 rm mycron
+crontab -l

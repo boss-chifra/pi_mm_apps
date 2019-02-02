@@ -61,6 +61,23 @@ cat <<EOF | tee /etc/local/mpd_start_morning.sh
 EOF
 chmod u+x /etc/local/mpd_start_morning.sh
 
+cat <<EOF | tee /etc/local/aa.sh
+#!/bin/bash
+
+/bin/echo "Audio Analog"
+/usr/bin/amixer cset numid=3 1
+EOF
+chmod u+x /etc/local/aa.sh
+
+cat <<EOF | tee /etc/local/ahdmi.sh
+#!/bin/bash
+
+/bin/echo "Audio Analog"
+/usr/bin/amixer cset numid=3 2
+EOF
+chmod u+x /etc/local/ahdmi.sh
+
+
 ----------------------------------------------------
 mpc add http://air2.radiorecord.ru:805/rr_320
 mpc playlist
