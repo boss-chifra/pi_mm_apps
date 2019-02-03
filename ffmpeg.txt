@@ -58,9 +58,20 @@ cat RELEASE ; ./ffbuild/version.sh
 checkinstall --nodoc --install=no --pkgversion=`cat VERSION` --exclude=/home/pi/ffmpeg_build/
 
 sudo dpkg -i ffmpeg_*_armhf.deb
+
+#Lock the package so it won't get replaced by another version during software updates
+#echo "ffmpeg hold" | sudo dpkg --set-selections
+
+#-----------------------------------------------------------------
+#tuning OS for better support Pi hardware accelerated encoder/decoder
+
 sudo cp -p /boot/config.txt /boot/config.txt.h264_mmal.`date +%d%m%Y`
 echo -e "\n#for h264_mmal decoder\ngpu_mem=192" | sudo tee -a /boot/config.txt
 diff -U2 /boot/config.txt.h264_mmal.`date +%d%m%Y` /boot/config.txt
 
-#Lock the package so it won't get replaced by another version during software updates
-echo "ffmpeg hold" | sudo dpkg --set-selections
+#------------------------------------------------------------------
+#download convert script
+[ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
+cd /etc/local
+wget https://raw.githubusercontent.com/boss-chifra/pi_mm_apps/master/Chromecast-conversion.sh
+sudo chmod +x ./Chromecast-conversion.sh

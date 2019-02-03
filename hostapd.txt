@@ -4,6 +4,7 @@ https://elinux.org/RPI-Wireless-Hotspot
 https://github.com/billz/raspap-webgui
 https://howtoraspberrypi.com/create-a-wi-fi-hotspot-in-less-than-10-minutes-with-pi-raspberry/
 https://wiki.gentoo.org/wiki/Hostapd#802.11b.2Fg.2Fn_triple_AP
+#-----------------------------------------------------
 
 echo -e  "192.168.1.1\tmalinka" | sudo tee -a /etc/hosts
 sudo apt-get -y install dnsmasq hostapd
@@ -48,7 +49,7 @@ sudo sed -ni '/network/q;p' /etc/wpa_supplicant/wpa_supplicant.conf
 #sudo systemctl disable hostapd
 -------------------------------------------------------------------
 #Wi-Fi + router setup
-[ -d /etc/local ] || sudo mkdir /etc/local
+[ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
 sudo chmod 760 /etc/local
 echo "Enter your name and press [ENTER]: "
 read WSSID
@@ -67,14 +68,6 @@ interface=wlan0
 wpa=none
 ignore_broadcast_ssid=0
 EOF
-
-cat << EOF > /etc/local/cwe.sh
-#!/bin/bash
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo sysctl -w net.ipv4.ip_forward=1
-sudo systemctl stop hostapd ; sleep 5 ; sudo cp -p /etc/hostapd/cw.conf /etc/hostapd/hostapd.conf ; sudo systemctl start hostapd
-EOF
-chmod +x /etc/local/cwe.sh
 
 cat << EOF | sudo tee /etc/hostapd/nw.conf
 driver=nl80211
@@ -95,11 +88,28 @@ wpa_pairwise=CCMP
 ignore_broadcast_ssid=0
 EOF
 
+cat << EOF > /etc/local/cwe.sh
+#!/bin/bash
+#chromecast wifi enable
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo systemctl stop hostapd ; sleep 5 ; sudo cp -p /etc/hostapd/cw.conf /etc/hostapd/hostapd.conf ; sudo systemctl start hostapd
+EOF
+chmod +x /etc/local/cwe.sh
+
 cat << EOF > /etc/local/cwd.sh
 #!/bin/bash
+#chromecast wifi disable
 sudo iptables -F POSTROUTING -t nat
 sudo sysctl -w net.ipv4.ip_forward=0
 sudo systemctl stop hostapd ; sleep 5 ; sudo cp -p /etc/hostapd/nw.conf /etc/hostapd/hostapd.conf ; sudo systemctl start hostapd
 EOF
 chmod +x /etc/local/cwd.sh
 
+cat << EOF > /etc/local/rs.sh
+#!/bin/bash
+echo "Router start"
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo sysctl -w net.ipv4.ip_forward=1
+EOF
+chmod +x /etc/local/rs.sh

@@ -4,9 +4,12 @@ https://github.com/sybdata/acearm
 https://github.com/sybdata/hlsproxy-arm
 
 http://www.hls-proxy.com/docs.php
+https://www.hls-proxy.com/downloads/
 
+#-------------------------------------------------------------------------------------
 cd ~
-wget https://www.dropbox.com/sh/4wd8raoak3d7c0u/AAC1VlMYAcnaAALhuiObkkRLa/5.2.4/hls-proxy-5.2.4.linux-armv7.zip?dl=0 -O hls-proxy.linux-armv7.zip
+#wget https://www.dropbox.com/sh/4wd8raoak3d7c0u/AAC1VlMYAcnaAALhuiObkkRLa/5.2.4/hls-proxy-5.2.4.linux-armv7.zip?dl=0 -O hls-proxy.linux-armv7.zip
+wget https://www.hls-proxy.com/downloads/5.4.1/hls-proxy-5.4.1.linux-armv7.zip -O hls-proxy.linux-armv7.zip
 sudo unzip -d /opt/hls-proxy hls-proxy.linux-armv7.zip
 sudo chown -R pi.pi /opt/hls-proxy
 
@@ -56,3 +59,50 @@ sudo systemctl daemon-reload
 sudo systemctl enable hls-proxy
 sudo systemctl start hls-proxy
 journalctl -u hls-proxy -f
+
+#------------------------------------
+sudo apt-get -y install nginx
+sudo cp -p /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+sudo systemctl stop nginx
+cat << EOF | sudo tee /etc/nginx/sites-available/default
+# Default server configuration
+#
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+
+location = /epg
+ {
+return 302 http://192.168.11.114:8080/epg.xml.gz;
+ }
+
+location = /mytv
+ {
+return 302 http://192.168.11.114:8080/playlist.m3u8;
+ }
+
+location = /playlist.m3u8
+ {
+    proxy_pass http://127.0.0.1:8080$request_uri;
+    proxy_hide_header Content-Type;
+    add_header Content-Type application/octet-stream;
+ }
+
+
+}
+EOF
+sudo systemctl start nginx
+sudo systemctl status nginx

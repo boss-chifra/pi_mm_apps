@@ -28,7 +28,7 @@ sudo bluetoothctl
 [bluetooth]# exit
 
 MAC="0C:A6:94:99:FA:4A"
-[ -d /etc/local ] || sudo mkdir /etc/local
+[ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
 cat << EOF | sudo tee /etc/local/bc.sh
 #!/bin/bash
 echo -e "connect ${MAC}\nquit" | sudo bluetoothctl
@@ -76,10 +76,11 @@ ctl.esquire2 {
 }
 EOF
 
+sudo reboot
 -----------------------------------------------------
 
-GUI tool
-sudo apt-get install blueman
+/etc/local/bc.sh
+sleep 60
 
 Speaker Test to test Left speaker (you should hear smooth noise):
 $ speaker-test -t sine -f 440 -c 2 -s 1
@@ -111,3 +112,6 @@ amixer -D hw -- sset PCM playback -20dB
 amixer cset numid=3 1
 # HDMI
 amixer cset numid=3 2
+
+GUI tool
+sudo apt-get install blueman

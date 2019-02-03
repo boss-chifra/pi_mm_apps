@@ -49,7 +49,7 @@ sudo chmod 666 /var/lib/mpd/playlists/*
 sudo systemctl restart mpd
 mpc enable only "Analog Jack"
 
-[ -d /etc/local ] || sudo mkdir /etc/local
+[ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
 cat <<EOF | tee /etc/local/mpd_start_morning.sh
 #!/bin/bash
 
@@ -77,11 +77,37 @@ cat <<EOF | tee /etc/local/ahdmi.sh
 EOF
 chmod u+x /etc/local/ahdmi.sh
 
+cd ~
+crontab -l
+#week schedule
+crontab -l > mycron
+cat << EOF | tee -a mycron
+
+#mpd week schedule
+40 05  *  *  1-5   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
+35 06  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
+50 06  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 85\% | /usr/bin/logger -t ALEXM
+30 07  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
+40 07  *  *  1-5   /usr/bin/mpc stop | /usr/bin/logger -t ALEXM
+
+30 07  *  *  6   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
+00 08  *  *  6   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
+00 09  *  *  6   /usr/bin/mpc stop | /usr/bin/logger -t ALEXM
+
+00 08  *  *  0   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
+45 08  *  *  0   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
+00 12  *  *  0   /usr/bin/mpc stop | /usr/bin/logger -t ALEXM
+EOF
+
+crontab mycron
+rm mycron
+crontab -l
 
 ----------------------------------------------------
 mpc add http://air2.radiorecord.ru:805/rr_320
 mpc playlist
 mpc play
+mpc stop
 mpc next
 mpc seek +01:00
 mpc seek 70:00

@@ -27,7 +27,8 @@ V_CODEC_ARG="-vsync 0 -keyint_min 0 -g 100 -b:v 1000k -profile:v high -level 4.1
 #audio codec args
 A_CODEC_ARG="-ab 192k -ac 2 -absf aac_adtstoasc"
 
-FFMPEG="/usr/bin/ffmpeg"
+#work only with custom compiled libfdk_aac
+FFMPEG="/usr/local/bin/ffmpeg"
 
 red=`tput setaf 1`
 green=`tput setaf 2`
