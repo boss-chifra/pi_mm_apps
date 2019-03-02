@@ -16,8 +16,11 @@ sysctl fs.inotify.max_user_watches | grep --color {[0-9],}
 sudo systemctl start minidlna
 
 #add minidlna user to group debian-transmission
-#only if user minidlna exists
+#only if user debian-transmission exists
 id -u debian-transmission > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
+
+#add minidlna user to group pi
+sudo usermod -aG pi minidlna
 
 cd ~
 #optional rebuild database
