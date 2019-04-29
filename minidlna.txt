@@ -32,3 +32,7 @@ echo '01 05    * * 5 sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna
 crontab mycron
 rm mycron
 crontab -l
+
+#add to /etc/local manual rebuild script
+echo 'sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R' > /etc/local/mdr.sh
+chmod +x /etc/local/mdr.sh
