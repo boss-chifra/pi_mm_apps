@@ -1,5 +1,6 @@
 cd ~
 sudo apt-get -y install samba
+
 sudo systemctl stop smbd
 sudo systemctl stop nmbd
 

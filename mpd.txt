@@ -38,10 +38,13 @@ EOF
 
 cat <<EOF | sudo tee /var/lib/mpd/playlists/detskoe-radio.m3u
 http://ic7.101.ru:8000/a199
+http://www.staroeradio.ru/detskoe128.m3u
+http://www.staroeradio.ru/ices128.m3u
 http://radio.tmstudia.ru:8001/live
 http://gamaun.online:8020/radio
 http://icecast.russkoeradio.cdnvideo.ru:80/st28.mp3
 http://music.myradio.ua:80/fairytales128.mp3
+https://rr-detskijkanal.hostingradio.ru/detskijkanal96.aacp
 EOF
 
 sudo chown mpd.audio -R /var/lib/mpd/playlists/
@@ -52,6 +55,13 @@ mpc enable only "Analog Jack"
 [ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
 cat <<EOF | tee /etc/local/mpd_start_morning.sh
 #!/bin/bash
+
+#skip before NY
+if [ `date +%V` -ge 52 ]
+then
+  echo "week number = `date +%V`"
+  exit 2
+fi
 
 /usr/bin/amixer -D hw sset "PCM" 73% ;
 /usr/bin/mpc enable only "Analog Jack" ;
@@ -84,11 +94,18 @@ crontab -l > mycron
 cat << EOF | tee -a mycron
 
 #mpd week schedule
-40 05  *  *  1-5   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
+15 06  *  *  1-5   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
 35 06  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
 50 06  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 85\% | /usr/bin/logger -t ALEXM
 30 07  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
 40 07  *  *  1-5   /usr/bin/mpc stop | /usr/bin/logger -t ALEXM
+30 22  *  *  *   /usr/bin/mpc stop | /usr/bin/logger -t ALEXM
+
+#40 07  *  *  1-5   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
+#35 08  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
+#50 08  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 85\% | /usr/bin/logger -t ALEXM
+#30 09  *  *  1-5   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM
+#40 09  *  *  1-5   /usr/bin/mpc stop | /usr/bin/logger -t ALEXM
 
 30 07  *  *  6   /etc/local/mpd_start_morning.sh | /usr/bin/logger -t ALEXM
 00 08  *  *  6   /usr/bin/amixer -D hw sset "PCM" 80\% | /usr/bin/logger -t ALEXM

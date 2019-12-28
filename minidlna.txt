@@ -1,6 +1,6 @@
 FILE="/etc/minidlna.conf"
-
 sudo apt-get -y install minidlna
+
 sudo systemctl stop minidlna
 sudo mkdir /media/{music,flash,video}; sudo chown pi.pi /media/{music,flash,video}; sudo chmod 775 /media/{music,flash,video}
 
@@ -25,14 +25,12 @@ sudo usermod -aG pi minidlna
 cd ~
 #optional rebuild database
 crontab -l > mycron
-#echo "00 05    * * * sudo systemctl stop minidlna | /usr/bin/logger -t ALEXM2 ; sudo rm /var/cache/minidlna/files.db | /usr/bin/logger -t ALEXM2 ; sudo systemctl start minidlna | /usr/bin/logger -t ALEXM2" >> mycron
-#echo "01 05    * * * sudo /etc/init.d/minidlna force-reload" >> mycron
 echo -e "\n#rebuild database" >> mycron
-echo '01 05    * * 5 sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R'  >> mycron
+echo '01 05    * * 5 sudo systemctl stop minidlna; sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo rm -rf /var/cache/minidlna/files.db ; sudo systemctl start minidlna ;'  >> mycron
 crontab mycron
 rm mycron
 crontab -l
 
 #add to /etc/local manual rebuild script
-echo 'sudo systemctl stop minidlna ; sudo kill `cat /run/minidlna/minidlna.pid` ; sudo -u minidlna -g minidlna /usr/sbin/minidlnad -f /etc/minidlna.conf -P /run/minidlna/minidlna.pid -R' > /etc/local/mdr.sh
+echo 'sudo systemctl stop minidlna ; sudo systemctl stop minidlna ; sudo rm -rf /var/cache/minidlna/files.db ; sudo systemctl start minidlna ;' > /etc/local/mdr.sh
 chmod +x /etc/local/mdr.sh

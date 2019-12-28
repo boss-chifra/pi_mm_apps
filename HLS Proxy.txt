@@ -7,12 +7,14 @@ http://www.hls-proxy.com/docs.php
 https://www.hls-proxy.com/downloads/
 
 #-------------------------------------------------------------------------------------
-VERSION="5.5.1"
-https://www.hls-proxy.com/downloads/5.5.1/hls-proxy-5.5.1.linux-armv7.zip
+VERSION="5.9.2"
+#https://www.hls-proxy.com/downloads/5.5.1/hls-proxy-5.5.1.linux-armv7.zip
 cd ~
-wget https://www.hls-proxy.com/downloads/${VERSION}/hls-proxy-${VERSION}.linux-armv7.zip -O hls-proxy.linux-armv7.zip
-sudo unzip -d /opt/hls-proxy hls-proxy.linux-armv7.zip
-sudo chown -R pi.pi /opt/hls-proxy
+mv hls-proxy.linux-armv7.zip hls-proxy.linux-armv7-old.zip
+wget https://www.hls-proxy.com/downloads/${VERSION}/hls-proxy-${VERSION}.linux-armv7.zip -O hls-proxy-${VERSION}.linux-armv7.zip
+sudo unzip -d /opt/hls-proxy-${VERSION} hls-proxy-${VERSION}.linux-armv7.zip
+sudo chown -R pi.pi /opt/hls-proxy-${VERSION}
+sudo ln -s /opt/hls-proxy-${VERSION} /opt/hls-proxy
 
 cat << "EOF" | sudo tee /etc/systemd/system/hls-proxy.service
 [Unit]

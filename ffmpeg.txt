@@ -63,7 +63,9 @@ sudo dpkg -i ffmpeg_*_armhf.deb
 #echo "ffmpeg hold" | sudo dpkg --set-selections
 
 #-----------------------------------------------------------------
-#tuning OS for better support Pi hardware accelerated encoder/decoder
+#tuning OS for better support Pi hardware accelerated decoder
+#need only for video playback supported by the GPU "ffplay -vcodec h264_mmal test.mp4" or
+#for some manual convert from bad h264(decode h264_mmal) to normal h264 (encode h264_omx) 
 
 sudo cp -p /boot/config.txt /boot/config.txt.h264_mmal.`date +%d%m%Y`
 echo -e "\n#for h264_mmal decoder\ngpu_mem=192" | sudo tee -a /boot/config.txt
