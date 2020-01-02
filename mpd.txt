@@ -57,7 +57,7 @@ cat <<EOF | tee /etc/local/mpd_start_morning.sh
 #!/bin/bash
 
 #skip before NY
-if [ `date +%V` -ge 52 ]
+if [ `date +%W` -ge 52 ]
 then
   echo "week number = `date +%V`"
   exit 2

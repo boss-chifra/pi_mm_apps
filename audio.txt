@@ -6,6 +6,8 @@ https://github.com/Arkq/bluez-alsa
 http://denvycom.com/blog/playing-audio-over-bluetooth-on-rasbperry-pi-command-line/
 https://forum.armbian.com/topic/6480-bluealsa-bluetooth-audio-using-alsa-not-pulseaudio/
 https://www.raspberrypi.org/forums/viewtopic.php?t=194990
+https://github.com/nicokaiser/rpi-audio-receiver
+https://www.sigmdel.ca/michel/ha/rpi/bluetooth_n_buster_01_en.html
 
 ----------------------------------------
 #Bluetooth
@@ -29,11 +31,11 @@ sudo bluetoothctl
 
 MAC="0C:A6:94:99:FA:4A"
 [ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
-cat << EOF | sudo tee /etc/local/bc.sh
+cat << EOF | tee /etc/local/bc.sh
 #!/bin/bash
 echo -e "connect ${MAC}\nquit" | sudo bluetoothctl
 EOF
-cat << EOF | sudo tee /etc/local/bd.sh
+cat << EOF | tee /etc/local/bd.sh
 #!/bin/bash
 echo -e "disconnect ${MAC}\nquit" | sudo bluetoothctl
 EOF
@@ -93,6 +95,7 @@ aplay /usr/share/sounds/alsa/Side_Left.wav ; aplay /usr/share/sounds/alsa/Side_R
 aplay -D esquire2 /usr/share/sounds/alsa/Side_Left.wav ; aplay -D esquire2 /usr/share/sounds/alsa/Side_Right.wav
 aplay -D bluealsa:HCI=hci0,DEV=0C:A6:94:99:FA:4A,PROFILE=a2dp /usr/share/sounds/alsa/Side_Left.wav ; aplay -D bluealsa:HCI=hci0,DEV=0C:A6:94:99:FA:4A,PROFILE=a2dp /usr/share/sounds/alsa/Side_Right.wav
 
+hcitool dev
 amixer -D esquire2 scontrols
 amixer -D bluealsa scontrols
 alsamixer -D bluealsa:HCI=hci0
@@ -115,3 +118,11 @@ amixer cset numid=3 2
 
 GUI tool
 sudo apt-get install blueman
+---------------------------------------
+#rebuild bluealsa
+sudo apt install --no-install-recommends dh-autoreconf
+sudo apt install --no-install-recommends libasound2-dev
+sudo apt install --no-install-recommends libbluetooth-dev
+sudo apt install --no-install-recommends libdbus-1-dev
+sudo apt install --no-install-recommends libglib2.0-dev
+sudo apt install --no-install-recommends libsbc-dev
