@@ -5,7 +5,8 @@ cd /home/pi
 wget http://www.bubblesoftapps.com/bubbleupnpserver/BubbleUPnPServer-distrib.zip -O bubbleupnpserver.zip
 sudo unzip -d /opt/bubbleupnpserver bubbleupnpserver.zip
 sudo chown -R pi.pi /opt/bubbleupnpserver
-sudo apt-get -y install openjdk-9-jre-headless
+[[ `lsb_release -c | cut -f2` == "stretch" ]] && jrenum="8" || jrenum="9"
+sudo apt-get -y install openjdk-${jrenum}-jre-headless
 
 cat << "EOF" > /opt/bubbleupnpserver/BubbleUPnPServer
 #!/bin/bash
