@@ -26,8 +26,11 @@ sudo reboot
 ----------------------------------------------------------------
 NTFS
 
+sudo apt install -y ntfs-3g
 
 DISK="sdb"
+DISK="sda"
+
 PARTNUM=`sudo parted -m /dev/${DISK} print | grep ntfs | head -n1 | cut -f1 -d:` ; echo ${PARTNUM}
 if [ -z "$PARTNUM" ]
 then
