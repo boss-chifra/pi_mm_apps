@@ -32,5 +32,6 @@ rm mycron
 crontab -l
 
 #add to /etc/local manual rebuild script
+[ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
 echo 'sudo systemctl stop minidlna ; sudo systemctl stop minidlna ; sudo rm -rf /var/cache/minidlna/files.db ; sudo systemctl start minidlna ;' > /etc/local/mdr.sh
 chmod +x /etc/local/mdr.sh
