@@ -1,7 +1,7 @@
 sudo apt-get -y install transmission-daemon transmission-cli transmission-common
+
 sudo service transmission-daemon stop
 sleep 60
-
 sudo cp -p /etc/transmission-daemon/settings.json /etc/transmission-daemon/settings.json_orig
 sudo sed -i '/rpc-whitelist"/s/1"/1,192.168.*,10.*"/' /etc/transmission-daemon/settings.json
 sudo sed -i '/download-dir/s:/var/lib/transmission-daemon/downloads:/media/video:' /etc/transmission-daemon/settings.json
@@ -22,4 +22,13 @@ ln -s /var/lib/transmission-daemon/.config/transmission-daemon/torrents ~/transm
 #only if user minidlna exists
 id -u minidlna > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
 
+-----------------------------------------------------------
 # Web URL http://x.x.x.x:9091/transmission/web/
+transmission-remote --auth transmission:transmission -pt
+Port is open: Yes
+
+transmission-remote --auth transmission:transmission --no-portmap
+localhost:9091/transmission/rpc/ responded: "success"
+
+transmission-remote --auth transmission:transmission --portmap
+localhost:9091/transmission/rpc/ responded: "success"
