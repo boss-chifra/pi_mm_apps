@@ -1,6 +1,10 @@
 sudo apt-get -y install transmission-daemon transmission-cli transmission-common
+<<<<<<< HEAD
 
 sudo service transmission-daemon stop
+=======
+sudo systemctl stop transmission-daemon
+>>>>>>> b1466eaa267774618268639707d48e1f85f68bb6
 sleep 60
 sudo cp -p /etc/transmission-daemon/settings.json /etc/transmission-daemon/settings.json_orig
 sudo sed -i '/rpc-whitelist"/s/1"/1,192.168.*,10.*"/' /etc/transmission-daemon/settings.json
@@ -10,7 +14,10 @@ sudo sed -i '/port-forwarding-enabled/s/false/true/' /etc/transmission-daemon/se
 sudo sed -i '/lpd-enabled/s/false/true/' /etc/transmission-daemon/settings.json
 sudo sed -i '/peer-port-random-on-start/s/false/true/' /etc/transmission-daemon/settings.json
 sudo sed -i '/alt-speed-down/s/50/1000/' /etc/transmission-daemon/settings.json
-sudo sed -i '/alt-speed-up/s/50/1000/' /etc/transmission-daemon/settings.json
+sudo sed -i '/alt-speed-up/s/50/51/' /etc/transmission-daemon/settings.json
+sudo sed -i '/alt-speed-enabled/s/false/true/' /etc/transmission-daemon/settings.json
+sudo sed -i '/alt-speed-time-begin/s/540/420/' /etc/transmission-daemon/settings.json
+sudo sed -i '/alt-speed-time-end/s/1020/1439/' /etc/transmission-daemon/settings.json
 
 sudo mkdir /media/{music,flash,video}; sudo chown pi.pi /media/{music,flash,video}; sudo chmod 775 /media/{music,flash,video}
 sudo usermod -aG pi debian-transmission
@@ -22,6 +29,7 @@ ln -s /var/lib/transmission-daemon/.config/transmission-daemon/torrents ~/transm
 #only if user minidlna exists
 id -u minidlna > /dev/null 2>&1 && sudo usermod -aG debian-transmission minidlna
 
+<<<<<<< HEAD
 -----------------------------------------------------------
 # Web URL http://x.x.x.x:9091/transmission/web/
 transmission-remote --auth transmission:transmission -pt
@@ -32,3 +40,6 @@ localhost:9091/transmission/rpc/ responded: "success"
 
 transmission-remote --auth transmission:transmission --portmap
 localhost:9091/transmission/rpc/ responded: "success"
+=======
+# Web URL http://x.x.x.x:9091/transmission/web/
+>>>>>>> b1466eaa267774618268639707d48e1f85f68bb6

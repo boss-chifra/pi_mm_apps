@@ -24,9 +24,10 @@ wq" | sudo ed -s /etc/mpd.conf
 
 cat <<EOF | sudo tee /var/lib/mpd/playlists/radio.m3u
 http://air.radiorecord.ru:805/rr_aac_64
-http://pool.cdn.lagardere.cz/fm-evropa2-128
+http://online.kissfm.ua/KissFM
 http://bfm.hostingradio.ru:8004/fm
 http://kommersant77.hostingradio.ru:8016/kommersant64.mp3
+http://pool.cdn.lagardere.cz/fm-evropa2-128
 http://icecast.vgtrk.cdnvideo.ru/vestifm_aac_64kbps
 http://audio2.video.ria.ru:80/voicerushi
 http://ic7.101.ru:8000/a199
@@ -49,7 +50,7 @@ EOF
 
 sudo chown mpd.audio -R /var/lib/mpd/playlists/
 sudo chmod 666 /var/lib/mpd/playlists/*
-sudo systemctl restart mpd
+sudo systemctl restart mpd ; sleep 10
 mpc enable only "Analog Jack"
 
 [ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
