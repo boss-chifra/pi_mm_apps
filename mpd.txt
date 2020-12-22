@@ -54,11 +54,11 @@ sudo systemctl restart mpd ; sleep 10
 mpc enable only "Analog Jack"
 
 [ -d /etc/local ] || sudo mkdir /etc/local && sudo chown pi.pi /etc/local
-cat <<EOF | tee /etc/local/mpd_start_morning.sh
+cat << 'EOF' | tee /etc/local/mpd_start_morning.sh
 #!/bin/bash
 
 #skip before NY
-if [ `date +%W` -ge 52 ]
+if [ `date +%V` -ge 52 ]
 then
   echo "week number = `date +%V`"
   exit 2
