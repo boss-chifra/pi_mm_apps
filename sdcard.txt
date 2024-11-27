@@ -26,17 +26,19 @@ sudo reboot
 ----------------------------------------------------------------
 NTFS
 
+sudo mkdir /media/video; sudo chown pi:pi /media/video; sudo chmod 775 /media/video
+
 sudo apt install -y ntfs-3g
 
 DISK="sdb"
 DISK="sda"
 
-PARTNUM=`sudo parted -m /dev/${DISK} print | grep ntfs | head -n1 | cut -f1 -d:` ; echo ${PARTNUM}
+PARTNUM=$(sudo parted -m /dev/${DISK} print | grep ntfs | head -n1 | cut -f1 -d:) ; echo ${PARTNUM}
 if [ -z "$PARTNUM" ]
 then
       echo "\$PARTNUM is empty"
 else
       echo "\$PARTNUM is NOT empty"
-	  NTFSLABEL=`sudo ntfslabel --no-action /dev/${DISK}$PARTNUM`
-	  echo "LABEL=$NTFSLABEL     /mnt/$NTFSLABEL     ntfs-3g     defaults,nofail,x-systemd.device-timeout=5,rw,relatime,user_id=0,group_id=0,allow_other   0   0" | sudo tee -a /etc/fstab
+      NTFSLABEL=$(sudo ntfslabel --no-action /dev/${DISK}${PARTNUM})
+      echo "LABEL=$NTFSLABEL     /media/video     ntfs-3g     defaults,nofail,x-systemd.device-timeout=5,rw,relatime,user_id=0,group_id=0,allow_other   0   0" | sudo tee -a /etc/fstab
 fi

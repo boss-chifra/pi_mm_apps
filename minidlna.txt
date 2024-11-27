@@ -1,12 +1,20 @@
 FILE="/etc/minidlna.conf"
-sudo apt-get -y install minidlna
+sudo apt -y install minidlna
 
 sudo systemctl stop minidlna
-sudo mkdir /media/{music,flash,video}; sudo chown pi.pi /media/{music,flash,video}; sudo chmod 775 /media/{music,flash,video}
+#sudo mkdir /media/{music,video}; sudo chown pi:pi /media/{music,video}; sudo chmod 775 /media/{music,video}
 
+sudo mount --bind /var/lib/mpd/music /media/music
+ls -al /media/music
+sudo umount /media/music
+echo "/var/lib/mpd/music /media/music none bind 0 0" | sudo tee -a /etc/fstab
+sudo systemctl daemon-reload
+sudo mount -a
+ls -al /media/music
 
+sudo cp -p ${FILE} ${FILE}.orig
 sudo sed -i '/inotify=yes/s/^#//g; /friendly_name/s/^#//g; /friendly_name/ s/=/=malinka: pi/' ${FILE}
-sudo sed -i '/^media_dir=/s/^/#/; /#media_dir/a  media_dir=A,\/media\/music\nmedia_dir=V,\/media\/video\nmedia_dir=V,\/media\/flash' ${FILE}
+sudo sed -i '/^media_dir=/s/^/#/; /#media_dir/a  media_dir=A,\/media\/music\nmedia_dir=V,\/media\/video' ${FILE}
 sudo sed -i '/merge_media_dirs/s/^#//g; /merge_media_dirs/ s/no/yes/' ${FILE}
 sudo sed -i '/#root_container/a  root_container=.' ${FILE}
 
