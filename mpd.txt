@@ -121,6 +121,8 @@ crontab mycron
 rm mycron
 crontab -l
 
+sudo systemctl enable mpd
+sudo systemctl restart mpd
 ----------------------------------------------------
 mpc add http://air2.radiorecord.ru:805/rr_320
 mpc playlist

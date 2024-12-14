@@ -1,22 +1,27 @@
+FILE="/etc/transmission-daemon/settings.json"
 sudo apt-get -y install transmission-daemon transmission-cli transmission-common
 
 #sudo service transmission-daemon stop
 sudo systemctl stop transmission-daemon
 sleep 60
-sudo cp -p /etc/transmission-daemon/settings.json /etc/transmission-daemon/settings.json_orig
-sudo sed -i '/rpc-whitelist"/s/1"/1,192.168.*,10.*"/' /etc/transmission-daemon/settings.json
-sudo sed -i '/download-dir/s:/var/lib/transmission-daemon/downloads:/media/video:' /etc/transmission-daemon/settings.json
-sudo sed -i '/umask/s/18/2/' /etc/transmission-daemon/settings.json
-sudo sed -i '/port-forwarding-enabled/s/false/true/' /etc/transmission-daemon/settings.json
-sudo sed -i '/lpd-enabled/s/false/true/' /etc/transmission-daemon/settings.json
-sudo sed -i '/peer-port-random-on-start/s/false/true/' /etc/transmission-daemon/settings.json
-sudo sed -i '/alt-speed-down/s/50/1000/' /etc/transmission-daemon/settings.json
-sudo sed -i '/alt-speed-up/s/50/51/' /etc/transmission-daemon/settings.json
-sudo sed -i '/alt-speed-enabled/s/false/true/' /etc/transmission-daemon/settings.json
-sudo sed -i '/alt-speed-time-begin/s/540/420/' /etc/transmission-daemon/settings.json
-sudo sed -i '/alt-speed-time-end/s/1020/1439/' /etc/transmission-daemon/settings.json
+sudo cp -p ${FILE} ${FILE}.orig
+sudo sed -i '/rpc-whitelist"/s/1"/1,192.168.*,10.*"/' ${FILE}
+sudo sed -i '/download-dir/s:/var/lib/transmission-daemon/downloads:/media/video:' ${FILE}
+sudo sed -i '/rename-partial-files/s/false/true/' ${FILE}
+sudo sed -i '/umask/s/18/2/' ${FILE}
+sudo sed -i '/port-forwarding-enabled/s/false/true/' ${FILE}
+sudo sed -i '/lpd-enabled/s/false/true/' ${FILE}
+sudo sed -i '/peer-port-random-on-start/s/false/true/' ${FILE}
+sudo sed -i '/encryption/s/1/2/' ${FILE}
+sudo sed -i '/alt-speed-down/s/50/1000/' ${FILE}
+sudo sed -i '/alt-speed-up/s/50/100/' ${FILE}
+sudo sed -i '/alt-speed-enabled/s/false/true/' ${FILE}
+sudo sed -i '/alt-speed-time-begin/s/540/420/' ${FILE}
+sudo sed -i '/alt-speed-time-end/s/1020/1439/' ${FILE}
+sudo diff -U2 ${FILE}.orig ${FILE}
+#sudo chown debian-transmission:debian-transmission ${FILE}
 
-sudo mkdir /media/{music,flash,video}; sudo chown pi.pi /media/{music,flash,video}; sudo chmod 775 /media/{music,flash,video}
+sudo mkdir /media/{music,video}; sudo chown pi:pi /media/{music,video}; sudo chmod 775 /media/{music,video}
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
 sudo systemctl start transmission-daemon
