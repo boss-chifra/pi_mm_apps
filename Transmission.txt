@@ -25,6 +25,11 @@ sudo diff -U2 ${FILE}.orig ${FILE}
 sudo mkdir /media/{music,video}; sudo chown pi:pi /media/{music,video}; sudo chmod 775 /media/{music,video}
 sudo usermod -aG pi debian-transmission
 sudo usermod -aG debian-transmission pi
+cat << EOF | sudo tee /etc/apparmor.d/local/transmission-daemon
+/media/video/ rw,
+/media/video/** rwk,
+EOF
+sudo systemctl reload apparmor
 sudo systemctl start transmission-daemon
 
 ln -s /var/lib/transmission-daemon/.config/transmission-daemon/torrents ~/transmission-torrents

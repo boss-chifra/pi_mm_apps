@@ -1,11 +1,12 @@
+FILE="/etc/samba/smb.conf"
 cd ~
 sudo apt-get -y install samba
 
 sudo systemctl stop smbd
 sudo systemctl stop nmbd
 
-sudo cp -p /etc/samba/smb.conf /etc/samba/smb.conf_orig
-sudo sed -i '/WORKGROUP/a netbios name = malinka' /etc/samba/smb.conf
+sudo cp -p ${FILE} ${FILE}.orig
+sudo sed -i '/WORKGROUP/a netbios name = malinka' ${FILE}
 echo -e "/netbios name = malinka/a
 local master = yes
 os level = 255
@@ -13,13 +14,12 @@ preferred master = yes
 guest account = pi
 map to guest = Never
 .
-wq" | sudo ed -s /etc/samba/smb.conf
+wq" | sudo ed -s ${FILE}
 
-
-cat << EOF | sudo tee -a /etc/samba/smb.conf
+cat << EOF | sudo tee -a ${FILE}
 [music]
     writable = yes
-    path = /var/lib/mpd/music
+    path = /media/music
     public = yes
     guest ok = yes
     guest only = yes
