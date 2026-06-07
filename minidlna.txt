@@ -3,11 +3,12 @@ sudo apt -y install minidlna
 
 sudo systemctl stop minidlna
 #sudo mkdir /media/{music,video}; sudo chown pi:pi /media/{music,video}; sudo chmod 775 /media/{music,video}
+sudo mkdir /media/music; sudo chown pi:pi /media/music; sudo chmod 775 /media/music
 
-sudo mount --bind /var/lib/mpd/music /media/music
+sudo mount --bind /media/video/Music /media/music
 ls -al /media/music
 sudo umount /media/music
-echo "/var/lib/mpd/music /media/music none bind 0 0" | sudo tee -a /etc/fstab
+echo "/media/video/Music /media/music none bind 0 0" | sudo tee -a /etc/fstab
 sudo systemctl daemon-reload
 sudo mount -a
 ls -al /media/music
