@@ -18,6 +18,7 @@ sudo sed -i '/alt-speed-up/s/50/100/' ${FILE}
 sudo sed -i '/alt-speed-enabled/s/false/true/' ${FILE}
 sudo sed -i '/alt-speed-time-begin/s/540/420/' ${FILE}
 sudo sed -i '/alt-speed-time-end/s/1020/1439/' ${FILE}
+sudo sed -i '/alt-speed-time-enabled/s/false/true/' ${FILE}
 sudo diff -U2 ${FILE}.orig ${FILE}
 #sudo chown debian-transmission:debian-transmission ${FILE}
 
